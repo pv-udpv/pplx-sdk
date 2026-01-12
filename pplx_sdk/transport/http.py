@@ -3,7 +3,7 @@
 Provides a wrapper around httpx.Client with authentication and configuration.
 """
 
-from typing import Any, Dict, Optional
+from typing import Any, ContextManager, Dict, Optional
 
 import httpx
 
@@ -120,7 +120,7 @@ class HttpTransport:
         path: str,
         json: Optional[Dict[str, Any]] = None,
         headers: Optional[Dict[str, str]] = None,
-    ) -> httpx.Response:
+    ) -> ContextManager[httpx.Response]:
         """Make a streaming HTTP request.
 
         Args:
@@ -130,7 +130,7 @@ class HttpTransport:
             headers: Additional headers for this request
 
         Returns:
-            httpx.Response with streaming enabled
+            Context manager yielding httpx.Response with streaming enabled
 
         Raises:
             RuntimeError: If transport not used in context manager

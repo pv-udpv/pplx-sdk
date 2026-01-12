@@ -46,6 +46,7 @@ def parse_sse_data(data: str) -> dict:
         Parsed dictionary or {"text": data} if not valid JSON
     """
     try:
-        return json.loads(data)
+        parsed: dict = json.loads(data)
+        return parsed
     except json.JSONDecodeError:
         return {"text": data}
