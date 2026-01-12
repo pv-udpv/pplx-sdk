@@ -27,23 +27,22 @@ def get_logger(
     logger = logging.getLogger(name)
     logger.setLevel(level)
 
-    # Remove existing handlers
-    logger.handlers.clear()
+    # Only add handler if logger doesn't have any handlers yet
+    if not logger.handlers:
+        # Create console handler
+        handler = logging.StreamHandler(sys.stdout)
+        handler.setLevel(level)
 
-    # Create console handler
-    handler = logging.StreamHandler(sys.stdout)
-    handler.setLevel(level)
+        # Set format
+        if not format_string:
+            format_string = (
+                "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+            )
 
-    # Set format
-    if not format_string:
-        format_string = (
-            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-        )
+        formatter = logging.Formatter(format_string)
+        handler.setFormatter(formatter)
 
-    formatter = logging.Formatter(format_string)
-    handler.setFormatter(formatter)
-
-    logger.addHandler(handler)
+        logger.addHandler(handler)
 
     return logger
 
