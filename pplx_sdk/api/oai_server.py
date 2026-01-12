@@ -6,6 +6,7 @@ Wraps Perplexity API with OpenAI's /v1/chat/completions format.
 import json
 import os
 import time
+from contextlib import asynccontextmanager
 from typing import AsyncGenerator, Optional
 
 from fastapi import FastAPI, HTTPException, Request
@@ -24,13 +25,6 @@ from pplx_sdk.api.oai_models import (
     ModelList,
 )
 from pplx_sdk.client import PerplexityClient
-
-# Initialize FastAPI app
-app = FastAPI(
-    title="Perplexity OpenAI-Compatible API",
-    description="OpenAI-compatible wrapper for Perplexity AI",
-    version="0.1.0",
-)
 
 # Global client instance (initialized on startup)
 _client: Optional[PerplexityClient] = None
@@ -62,23 +56,35 @@ def get_client() -> PerplexityClient:
     return _client
 
 
-@app.on_event("startup")
-async def startup_event() -> None:
-    """Initialize client on startup."""
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
+    """Manage application lifespan.
+
+    Initialize client on startup and cleanup on shutdown.
+    """
+    # Startup
+    global _client
     try:
         get_client()
     except Exception:
         # Allow startup even if client fails (will error on first request)
         pass
 
+    yield
 
-@app.on_event("shutdown")
-async def shutdown_event() -> None:
-    """Cleanup client on shutdown."""
-    global _client
+    # Shutdown
     if _client:
         _client.close()
         _client = None
+
+
+# Initialize FastAPI app with lifespan
+app = FastAPI(
+    title="Perplexity OpenAI-Compatible API",
+    description="OpenAI-compatible wrapper for Perplexity AI",
+    version="0.1.0",
+    lifespan=lifespan,
+)
 
 
 @app.get("/v1/health")

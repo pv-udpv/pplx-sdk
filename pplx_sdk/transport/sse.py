@@ -3,6 +3,8 @@
 Handles SSE protocol parsing and yields MessageChunk objects.
 """
 
+from __future__ import annotations
+
 import json
 from typing import Any, Dict, Generator, Optional
 

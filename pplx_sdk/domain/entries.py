@@ -3,6 +3,8 @@
 Provides high-level API for asking questions and streaming responses.
 """
 
+from __future__ import annotations
+
 from typing import Any, Dict, Generator, Optional
 import uuid
 

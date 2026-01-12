@@ -3,6 +3,8 @@
 Provides resilient streaming with automatic retry and resume capabilities.
 """
 
+from __future__ import annotations
+
 import time
 from typing import Any, Dict, Generator, Optional
 
