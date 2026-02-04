@@ -4,9 +4,9 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Production-grade Python SDK for Perplexity AI with:
-- **Native SSE streaming** via `/rest/sse/perplexity.ask`
+- **Native SSE streaming** via `/rest/sse/perplexity_ask`
 - **OpenAI-compatible API** wrapper (`/v1/chat/completions` format)
-- **Full entity wrappers**: Threads, Entries, Conversations, Collections, Articles
+- **Full entity wrappers**: `Conversation` bound => Chat (oai chats), Thread(oai agents, ask/search), Entry -> Message, Collections -> Spaces, Articles -> Pages 
 - **Reconnection & retry logic** with backoff
 - **Type-safe** with Pydantic v2 models
 - **Async-first** architecture
