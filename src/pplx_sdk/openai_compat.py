@@ -11,7 +11,7 @@ from typing import AsyncGenerator, Generator
 from pydantic import BaseModel
 
 from pplx_sdk.client import AsyncPplxClient, PplxClient
-from pplx_sdk.models import ChatCompletionChunk, ChatCompletionMessage, ChatCompletionRole
+from pplx_sdk.models import ChatCompletionMessage, ChatCompletionRole
 
 logger = logging.getLogger(__name__)
 
