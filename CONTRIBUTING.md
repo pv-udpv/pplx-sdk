@@ -1,303 +1,347 @@
 # Contributing to pplx-sdk
 
-Thank you for your interest in contributing to the Perplexity Python SDK!
+Thank you for interest in contributing! This guide will help you get started.
 
-## Development Setup
+## Setup
 
 ### Prerequisites
+- Python 3.12+
+- [uv](https://github.com/astral-sh/uv) (recommended) or pip
+- Git
 
-- Python 3.12 or higher
-- uv (recommended) or pip
+### Development Environment
 
-### Installation
-
-1. Clone the repository:
 ```bash
-git clone https://github.com/pv-udpv/pplx-sdk.git
+# Clone repository
+git clone https://github.com/pv-udpv/pplx-sdk
 cd pplx-sdk
-```
 
-2. Create a virtual environment:
-```bash
+# Create virtual environment
 uv venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-```
+source .venv/bin/activate  # or .venv\Scripts\activate on Windows
 
-3. Install dependencies:
-```bash
-# Install package in editable mode with dev dependencies
+# Install with development dependencies
 uv pip install -e ".[dev]"
 
-# Or install with API server support
-uv pip install -e ".[dev,api]"
+# Verify setup
+python -c "import pplx_sdk; print(pplx_sdk.__version__)"
 ```
 
 ## Development Workflow
 
-### Running Tests
+### 1. Create Feature Branch
 
 ```bash
-# Run all tests
-pytest
-
-# Run with coverage
-pytest --cov=pplx_sdk --cov-report=html
-
-# Run specific test file
-pytest tests/test_transport.py
-
-# Run specific test
-pytest tests/test_transport.py::test_http_transport
+git checkout -b feature/my-feature
+# or
+git checkout -b fix/issue-123
 ```
 
-### Code Quality
+### 2. Make Changes
 
-We use several tools to maintain code quality:
+Follow these standards:
 
-#### Linting
+#### Code Style
+- **Type hints**: 100% coverage (mypy --strict)
+- **Docstrings**: Google style on all public APIs
+- **Line length**: 100 characters (ruff config)
+- **Imports**: isort + black compatible
 
-```bash
-# Run ruff linter
-ruff check .
-
-# Auto-fix issues
-ruff check --fix .
-```
-
-#### Formatting
-
-```bash
-# Format with black
-black pplx_sdk tests
-
-# Check formatting
-black --check pplx_sdk tests
-
-# Or use ruff formatter
-ruff format .
-```
-
-#### Type Checking
-
-```bash
-# Run mypy type checker
-mypy pplx_sdk
-
-# Check specific file
-mypy pplx_sdk/client.py
-```
-
-#### Import Sorting
-
-```bash
-# Sort imports with isort
-isort pplx_sdk tests
-
-# Check import order
-isort --check-only pplx_sdk tests
-```
-
-### Running the API Server
-
-```bash
-# Set authentication token
-export PPLX_AUTH_TOKEN="your-session-token"
-
-# Run server
-uvicorn pplx_sdk.api.oai_server:app --reload --port 8000
-
-# Or use Python directly
-python -m pplx_sdk.api.oai_server
-```
-
-## Coding Standards
-
-### Style Guide
-
-- Follow PEP 8 style guidelines
-- Use type hints for all function parameters and return values
-- Write docstrings in Google style format
-- Maximum line length: 100 characters
-
-### Docstring Format
+#### Example Function
 
 ```python
-def function_name(param1: str, param2: int) -> bool:
-    """Short description of function.
+from typing import Optional
 
-    Longer description if needed, explaining behavior and usage.
+def stream_ask(
+    self,
+    query: str,
+    context_uuid: str,
+    mode: Optional[str] = None,
+    **kwargs: Any,
+) -> Generator[MessageChunk, None, None]:
+    """Stream response from Perplexity API.
 
     Args:
-        param1: Description of param1
-        param2: Description of param2
+        query: User query string.
+        context_uuid: Thread UUID.
+        mode: Query mode (research, concise, etc).
+        **kwargs: Additional parameters.
 
-    Returns:
-        Description of return value
+    Yields:
+        MessageChunk events from SSE stream.
 
     Raises:
-        ValueError: Description of when this is raised
-        TypeError: Description of when this is raised
-
-    Example:
-        >>> result = function_name("test", 42)
-        >>> print(result)
-        True
+        TimeoutError: If stream exceeds timeout_ms.
+        RuntimeError: If stream is empty.
     """
-    pass
+    # Implementation
+    ...
 ```
 
-### Type Hints
+### 3. Format & Lint
 
-Always include type hints:
+```bash
+# Format code
+ruff format .
 
-```python
-from typing import Optional, List, Dict, Any
+# Run linter
+ruff check --fix .
 
-def process_data(
-    items: List[str],
-    config: Optional[Dict[str, Any]] = None
-) -> Dict[str, int]:
-    """Process data and return results."""
-    pass
+# Type check
+mypy pplx_sdk
+
+# All-in-one
+make lint  # if Makefile exists
 ```
 
-## Testing Guidelines
+### 4. Write Tests
 
-### Test Structure
+```bash
+# Create test_my_feature.py in tests/
+# Run tests
+pytest tests/test_my_feature.py -v
 
-- Place tests in the `tests/` directory
-- Name test files with `test_` prefix
-- Use descriptive test function names
+# Run all tests
+pytest tests/ -v --cov=pplx_sdk
 
-Example:
-
-```python
-def test_http_transport_request():
-    """Test HTTP transport makes requests correctly."""
-    transport = HttpTransport(auth_token="test-token")
-    # Test implementation
+# Check coverage
+pytest tests/ --cov=pplx_sdk --cov-report=html
+# Open htmlcov/index.html
 ```
 
-### Test Coverage
+### 5. Commit & Push
 
-- Aim for >80% code coverage
-- Test both success and failure cases
-- Test edge cases and boundary conditions
+```bash
+# Commit with clear message
+git add .
+git commit -m "feat: add streaming manager with retry logic"
 
-### Mock External Dependencies
+# or
+git commit -m "fix: handle SSE parse errors gracefully"
 
-Use `pytest-httpx` to mock HTTP requests:
+# Commit message types:
+# feat: New feature
+# fix: Bug fix
+# docs: Documentation
+# test: Test additions
+# refactor: Code refactoring
+# chore: Build, deps, etc
+
+# Push
+git push origin feature/my-feature
+```
+
+### 6. Open Pull Request
+
+- Link to related issues (#123)
+- Include test results
+- Screenshot/example if UI changes
+- Follow template
+
+## Testing
+
+### Unit Tests
+
+```bash
+# Run specific test
+pytest tests/test_transport.py::test_http_request -v
+
+# Run with coverage
+pytest tests/ --cov=pplx_sdk --cov-report=term-missing
+
+# Run async tests
+pytest tests/test_streaming.py -v
+```
+
+### Using pytest-httpx for Mocking
 
 ```python
 import pytest
-import httpx
 from pytest_httpx import HTTPXMock
+from pplx_sdk.transport import HttpTransport
 
-def test_api_call(httpx_mock: HTTPXMock):
-    httpx_mock.add_response(
-        url="https://api.example.com/endpoint",
-        json={"status": "success"}
-    )
-    # Test implementation
+def test_http_request(httpx_mock: HTTPXMock) -> None:
+    """Test HTTP transport with mocked response."""
+    httpx_mock.add_response(json={"result": "success"})
+    
+    transport = HttpTransport()
+    response = transport.request("GET", "test")
+    
+    assert response.json() == {"result": "success"}
 ```
 
-## Pull Request Process
+### Using pytest Fixtures
 
-1. **Fork the repository** and create a feature branch:
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
+```python
+# tests/fixtures.py
+@pytest.fixture
+def mock_sse_response() -> str:
+    """Mock SSE streaming response."""
+    return """event: answer_chunk
+data: {"type": "answer_chunk", "text": "Hello"}
 
-2. **Make your changes** following the coding standards
+event: answer_chunk
+data: {"type": "answer_chunk", "text": " world"}
 
-3. **Add tests** for new functionality
+event: final_response
+data: {"type": "final_response", "backend_uuid": "uuid", "text_completed": true}
 
-4. **Run quality checks**:
-   ```bash
-   ruff check --fix .
-   black pplx_sdk tests
-   mypy pplx_sdk
-   pytest --cov=pplx_sdk
-   ```
+: [end]
+"""
+```
 
-5. **Commit your changes** with clear messages:
-   ```bash
-   git commit -m "feat: add new feature description"
-   ```
+## Code Organization
 
-   Use conventional commit format:
-   - `feat:` for new features
-   - `fix:` for bug fixes
-   - `docs:` for documentation changes
-   - `test:` for test additions/changes
-   - `refactor:` for code refactoring
-   - `chore:` for maintenance tasks
-
-6. **Push to your fork**:
-   ```bash
-   git push origin feature/your-feature-name
-   ```
-
-7. **Create a Pull Request** on GitHub with:
-   - Clear description of changes
-   - Reference to related issues
-   - Test results
-   - Screenshots (if applicable)
-
-## Project Structure
+### Module Structure
 
 ```
-pplx-sdk/
-├── pplx_sdk/              # Main package
-│   ├── __init__.py        # Public API exports
-│   ├── client.py          # Main client and Conversation API
-│   ├── domain/            # Domain models and services
-│   │   ├── models.py      # Pydantic models
-│   │   ├── entries.py     # Entries service
-│   │   └── ...
-│   ├── transport/         # HTTP and SSE transport
-│   │   ├── http.py        # HTTP client wrapper
-│   │   └── sse.py         # SSE streaming
-│   ├── streaming/         # Streaming utilities
-│   │   ├── manager.py     # Retry and reconnection
-│   │   └── ...
-│   ├── api/               # OpenAI-compatible API
-│   │   ├── oai_server.py  # FastAPI server
-│   │   └── ...
-│   └── utils/             # Utility functions
-├── tests/                 # Test files
-├── examples/              # Example scripts
-└── docs/                  # Documentation
+pplx_sdk/
+├── __init__.py                 # Public API
+├── client.py                   # PerplexityClient, Conversation
+├── domain/
+│   ├── __init__.py
+│   ├── models.py              # Pydantic data classes
+│   ├── entries.py             # EntriesService (core Ask API)
+│   ├── threads.py             # ThreadsService
+│   ├── collections.py         # CollectionsService
+│   ├── memories.py            # MemoriesService
+│   └── articles.py            # ArticlesService
+├── transport/
+│   ├── __init__.py
+│   ├── http.py                # HttpTransport wrapper
+│   └── sse.py                 # SSE streaming
+├── streaming/
+│   ├── __init__.py
+│   ├── manager.py             # StreamManager (retry/reconnect)
+│   ├── parser.py              # SSE utilities
+│   └── types.py               # Type definitions
+├── api/
+│   ├── __init__.py
+│   ├── oai_server.py          # FastAPI OpenAI adapter
+│   ├── oai_models.py          # OpenAI Pydantic models
+│   └── middleware.py          # Auth, logging
+└── utils/
+    ├── __init__.py
+    ├── auth.py                # Token extraction
+    └── logging.py             # Structured logging
 ```
+
+## Common Issues
+
+### mypy Errors
+
+```bash
+# Check strict mode
+mypy pplx_sdk --strict
+
+# Ignore specific errors
+mypy pplx_sdk --ignore-missing-imports
+
+# Update stubs
+pip install types-requests types-setuptools
+```
+
+### Import Errors
+
+```bash
+# Reinstall package in editable mode
+uv pip install -e .
+
+# Clear cache
+rm -rf pplx_sdk/__pycache__
+rm -rf .pytest_cache
+```
+
+### SSE Parsing Issues
+
+- Verify line-by-line parsing
+- Handle `:` comments (skip)
+- Handle empty lines (skip)
+- Stop on `[end]` marker
+- Don't skip `event:` lines, use for metadata
 
 ## Documentation
 
-### Adding Documentation
+### Docstring Template
 
-- Update docstrings for all public APIs
-- Add examples to docstrings
-- Update README.md for user-facing changes
+```python
+def method(
+    self,
+    param1: str,
+    param2: Optional[int] = None,
+) -> Dict[str, Any]:
+    """One-line summary.
 
-### Building Documentation
+    Longer description if needed. Explain the behavior,
+    use cases, and important details.
 
-```bash
-# Install docs dependencies
-uv pip install -e ".[docs]"
+    Args:
+        param1: Description.
+        param2: Optional description.
 
-# Build docs with Sphinx
-cd docs
-make html
+    Returns:
+        Description of return value.
 
-# View docs
-open _build/html/index.html
+    Raises:
+        ValueError: When X happens.
+        TimeoutError: When timeout exceeded.
+
+    Example:
+        >>> method("test")
+        {...}
+    """
+    ...
 ```
 
-## Getting Help
+### Update README
 
-- Open an issue for bugs or feature requests
-- Start a discussion for questions or ideas
-- Join our community chat (link TBD)
+If adding new features, update README.md examples:
 
-## License
+```bash
+# Usage
+git diff README.md
+```
 
-By contributing, you agree that your contributions will be licensed under the MIT License.
+## Performance
+
+- Avoid blocking I/O in generators
+- Use httpx streaming for large responses
+- Cache authentication headers
+- Profile with cProfile if needed
+
+## Security
+
+- Never log session tokens
+- Validate input types (Pydantic)
+- Use HTTPS for API calls
+- Handle 401/403 gracefully
+- Don't commit .env files
+
+## Release Process
+
+Maintainers only:
+
+```bash
+# Update version in pplx_sdk/__init__.py
+__version__ = "0.2.0"
+
+# Update CHANGELOG.md
+
+# Create tag
+git tag -a v0.2.0 -m "Release 0.2.0"
+git push origin v0.2.0
+
+# Build and publish
+python -m build
+twine upload dist/*
+```
+
+## Questions?
+
+- Open an [issue](https://github.com/pv-udpv/pplx-sdk/issues)
+- Check [README](README.md) first
+- See `.copilot-instructions.md` for code standards
+
+---
+
+Thank you for contributing! 🚀

@@ -1,4 +1,4 @@
-# Python
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
@@ -16,26 +16,32 @@ parts/
 sdist/
 var/
 wheels/
+pip-wheel-metadata/
 share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-MANIFEST
+PIPFILE.lock
 
 # Virtual environments
-venv/
+.venv
 env/
+venv/
 ENV/
-.venv/
-.env
+env.bak/
+venv.bak/
 
-# IDEs
+# IDE
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 .DS_Store
+*.sublime-project
+*.sublime-workspace
+.spyderproject
+.spyproject
 
 # Testing
 .tox/
@@ -46,39 +52,28 @@ ENV/
 nosetests.xml
 coverage.xml
 *.cover
-*.log
+*.py,cover
+.hypothesis/
 .pytest_cache/
 htmlcov/
-
-# Type checking
 .mypy_cache/
 .dmypy.json
 dmypy.json
-.pytype/
 
 # Documentation
+sites/
 docs/_build/
-docs/_static/
-docs/_templates/
 
-# Jupyter
-.ipynb_checkpoints/
-*.ipynb
-
-# Environment variables
+# Environment
 .env
 .env.local
 .env.*.local
 
-# Distribution / packaging
-*.whl
+# OS
+Thumbs.db
+.DS_Store
 
-# Temporary files
-*.tmp
-.tmp/
-tmp/
-temp/
-
-# Logs
+# Project-specific
 *.log
-logs/
+.venv/
+.uv/
