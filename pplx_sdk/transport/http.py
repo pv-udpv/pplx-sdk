@@ -3,7 +3,8 @@
 Provides a wrapper around httpx.Client with authentication and configuration.
 """
 
-from typing import Any, ContextManager
+from contextlib import AbstractContextManager
+from typing import Any
 
 import httpx
 
@@ -149,7 +150,7 @@ class HttpTransport:
         path: str,
         json: dict[str, Any] | None = None,
         headers: dict[str, str] | None = None,
-    ) -> ContextManager[httpx.Response]:
+    ) -> AbstractContextManager[httpx.Response]:
         """Make a streaming HTTP request.
 
         Args:

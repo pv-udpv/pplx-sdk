@@ -143,7 +143,7 @@ async def chat_completions(
     try:
         client = get_client()
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
     # Get model configuration
     model_config = MODEL_MAPPING.get(request.model)
@@ -273,7 +273,7 @@ async def chat_completions(
             return response.model_dump()
 
         except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+            raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 if __name__ == "__main__":
