@@ -82,6 +82,9 @@ This meta-skill composes the following skills. Apply them in the order shown bas
 | `python-design-patterns` | `wshobson/agents` | Protocol pattern, DI, factory |
 | `api-design-principles` | `wshobson/agents` | REST API design, endpoint conventions |
 | `async-python-patterns` | `wshobson/agents` | async/await, concurrency patterns |
+| `skill-creator` | `anthropics/skills` | Guide for creating new skills |
+| `mcp-builder` | `anthropics/skills` | Build MCP servers for tool integration |
+| `webapp-testing` | `anthropics/skills` | Test web apps with Playwright |
 
 ## Workflow: New Feature
 
@@ -139,6 +142,7 @@ pip install -e ".[dev]"
 
 # Install/update community skills
 npx skills add wshobson/agents --skill python-testing-patterns --skill python-type-safety --skill python-error-handling --skill python-design-patterns --skill api-design-principles --skill async-python-patterns --agent github-copilot -y
+npx skills add anthropics/skills --skill skill-creator --skill mcp-builder --skill webapp-testing --agent github-copilot -y
 
 # Lint, format, type-check, test
 ruff check --fix . && ruff format .

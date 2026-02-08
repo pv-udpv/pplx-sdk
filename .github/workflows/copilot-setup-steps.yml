@@ -34,4 +34,4 @@ jobs:
           node-version: "22"
 
       - name: Install skills
-        run: npx -y skills add pv-udpv/pplx-sdk --all 2>/dev/null || true
+        run: npx -y skills add pv-udpv/pplx-sdk --all || echo "Skills installation skipped"
