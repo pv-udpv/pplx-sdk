@@ -1,0 +1,114 @@
+name: Install Copilot Skills
+
+# Manual trigger and schedule for skill installation
+on:
+  workflow_dispatch:
+    inputs:
+      force_reinstall:
+        description: 'Force reinstall all skills'
+        required: false
+        default: false
+        type: boolean
+  push:
+    paths:
+      - 'scripts/install-copilot-skills.sh'
+      - '.github/workflows/install-copilot-skills.yml'
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  install-skills:
+    name: Install GitHub Copilot Skills
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Check for existing skills
+        id: check_skills
+        run: |
+          if [ -d ".copilot/skills" ] && [ "${{ github.event.inputs.force_reinstall }}" != "true" ]; then
+            echo "skills_exist=true" >> $GITHUB_OUTPUT
+            echo "ℹ️  Skills directory already exists. Use force_reinstall to reinstall."
+          else
+            echo "skills_exist=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Install Copilot Skills
+        if: steps.check_skills.outputs.skills_exist == 'false'
+        run: |
+          chmod +x scripts/install-copilot-skills.sh
+          ./scripts/install-copilot-skills.sh
+        env:
+          NODE_ENV: production
+      
+      - name: Check for changes
+        id: check_changes
+        if: steps.check_skills.outputs.skills_exist == 'false'
+        run: |
+          if git diff --quiet; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "ℹ️  No changes detected after skill installation."
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            git status --short
+          fi
+      
+      - name: Configure Git
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+      
+      - name: Commit and push changes
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          git add .copilot/
+          git commit -m "chore: Install GitHub Copilot skills from awesome-copilot
+          
+          Installed skills:
+          - git-commit: Enhanced commit message generation
+          - gh-cli: GitHub CLI integration
+          - refactor: Code refactoring assistance
+          - prd: Product Requirements Document generation
+          - github-issues: GitHub Issues management
+          - chrome-devtools: DevTools integration
+          
+          Automated via GitHub Actions"
+          
+          git push origin HEAD:main
+      
+      - name: Summary
+        if: always()
+        run: |
+          echo "## 🎯 Copilot Skills Installation Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.check_skills.outputs.skills_exist }}" == "true" ]; then
+            echo "✅ Skills already installed" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ steps.check_changes.outputs.has_changes }}" == "true" ]; then
+            echo "✅ Skills installed and committed" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### Installed Skills" >> $GITHUB_STEP_SUMMARY
+            echo "- git-commit" >> $GITHUB_STEP_SUMMARY
+            echo "- gh-cli" >> $GITHUB_STEP_SUMMARY
+            echo "- refactor" >> $GITHUB_STEP_SUMMARY
+            echo "- prd" >> $GITHUB_STEP_SUMMARY
+            echo "- github-issues" >> $GITHUB_STEP_SUMMARY
+            echo "- chrome-devtools" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "ℹ️  No changes required" >> $GITHUB_STEP_SUMMARY
+          fi
