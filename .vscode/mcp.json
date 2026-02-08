@@ -1,0 +1,16 @@
+{
+  "mcp": {
+    "servers": {
+      "fetch": {
+        "type": "stdio",
+        "command": "npx",
+        "args": ["-y", "@anthropic-ai/mcp-fetch@latest"]
+      },
+      "context7": {
+        "type": "stdio",
+        "command": "npx",
+        "args": ["-y", "@upstash/context7-mcp@latest"]
+      }
+    }
+  }
+}
