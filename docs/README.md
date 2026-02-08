@@ -119,7 +119,7 @@ result = agent.execute(task, inputs={"target": "pplx_sdk/transport/"})
 Based on research findings:
 
 1. **Close Issue #8** — `.github/copilot-instructions.md` complete (all criteria met)
-2. **Implement Issue #6** — utils → shared refactor (clear workflow defined)
+2. **Finalize Issue #6** — remove deprecated `pplx_sdk.utils` shim and close refactor
 3. **Break down Issue #11** — Split epic into phases matching agent workflow
 4. **Add integration tests** — Automate agent handoff validation
 5. **Update README** — Add agent handoff patterns from research
