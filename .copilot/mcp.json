@@ -1,5 +1,23 @@
 {
   "mcpServers": {
+    "github-rw": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/",
+      "headers": {
+        "Authorization": "Bearer ${input:github_mcp_pat}"
+      }
+    },
+    "perplexity_ai": {
+      "type": "http",
+      "url": "https://api.perplexity.ai/mcp/",
+      "headers": {
+        "Authorization": "Bearer ${input:perplexity_api_key}"
+      }
+    },
+    "deep-wiki": {
+      "command": "npx",
+      "args": ["-y", "mcp-deepwiki@latest"]
+    },
     "fetch": {
       "command": "npx",
       "args": ["-y", "@anthropic-ai/mcp-fetch@latest"]
@@ -8,13 +26,23 @@
       "command": "npx",
       "args": ["-y", "@upstash/context7-mcp@latest"]
     },
-    "deepwiki": {
-      "command": "npx",
-      "args": ["-y", "mcp-deepwiki@latest"]
-    },
     "llms-txt": {
       "command": "npx",
       "args": ["-y", "@mcp-get-community/server-llm-txt@latest"]
     }
-  }
+  },
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "github_mcp_pat",
+      "description": "GitHub Personal Access Token for MCP",
+      "password": true
+    },
+    {
+      "type": "promptString",
+      "id": "perplexity_api_key",
+      "description": "Perplexity AI API Key",
+      "password": true
+    }
+  ]
 }

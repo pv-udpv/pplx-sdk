@@ -538,11 +538,13 @@ The `awesome-copilot` subagent (`.claude/agents/awesome-copilot.md`) manages thi
 
 All agent environments share MCP servers defined in `.copilot/mcp.json`:
 
-| Server | Package | Purpose |
-|--------|---------|---------|
+| Server | Type | Purpose |
+|--------|------|---------|
+| `github-rw` | HTTP (`api.githubcopilot.com`) | GitHub read-write operations via MCP |
+| `perplexity_ai` | HTTP (`api.perplexity.ai`) | Perplexity AI search and reasoning |
+| `deep-wiki` | `mcp-deepwiki` | GitHub repo documentation search |
 | `fetch` | `@anthropic-ai/mcp-fetch` | Fetch any URL as markdown |
 | `context7` | `@upstash/context7-mcp` | Context-aware library docs |
-| `deepwiki` | `mcp-deepwiki` | GitHub repo documentation search |
 | `llms-txt` | `@mcp-get-community/server-llm-txt` | LLM-optimized docs via llms.txt |
 
 ## Development
@@ -550,22 +552,21 @@ All agent environments share MCP servers defined in `.copilot/mcp.json`:
 ### Setup
 
 ```bash
-# Create venv
-uv venv
-source .venv/bin/activate
+# Install uv (if not installed)
+curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Install with dev deps
-uv pip install -e ".[dev]"
+# Install all dependencies (creates venv automatically)
+uv sync --all-extras --dev
 
 # Run tests
-pytest -v
+uv run pytest -v
 
 # Type check
-mypy pplx_sdk
+uv run mypy pplx_sdk
 
 # Format
-ruff format .
-ruff check --fix .
+uv run ruff format .
+uv run ruff check --fix .
 ```
 
 ### Dependencies

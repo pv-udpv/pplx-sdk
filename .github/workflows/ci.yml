@@ -17,40 +17,34 @@ jobs:
         python-version: ["3.12", "3.13"]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
         with:
           python-version: ${{ matrix.python-version }}
-
-      - name: Cache pip
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('pyproject.toml') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-${{ matrix.python-version }}-
+          enable-cache: true
+          cache-dependency-glob: "**/pyproject.toml"
 
       - name: Install dependencies
-        run: pip install -e ".[dev]"
+        run: uv sync --all-extras --dev
 
       - name: Install pre-commit
         if: ${{ env.PRE_COMMIT_BYPASS != '1' && env.PRE_COMMIT_BYPASS != 'true' }}
-        run: pip install pre-commit
+        run: uv run pre-commit install
 
       - name: Run pre-commit
         if: ${{ env.PRE_COMMIT_BYPASS != '1' && env.PRE_COMMIT_BYPASS != 'true' }}
-        run: pre-commit run --all-files
+        run: uv run pre-commit run --all-files
 
       - name: Run tests with coverage
-        run: pytest --cov=pplx_sdk --cov-report=xml --cov-report=term-missing
+        run: uv run pytest --cov=pplx_sdk --cov-report=xml --cov-report=term-missing
 
       - name: Run ruff linting
-        run: ruff check pplx_sdk/ tests/
+        run: uv run ruff check pplx_sdk/ tests/
 
       - name: Run ruff formatting check
-        run: ruff format --check pplx_sdk/ tests/
+        run: uv run ruff format --check pplx_sdk/ tests/
 
       - name: Run mypy type checking
-        run: mypy pplx_sdk/ --ignore-missing-imports
+        run: uv run mypy pplx_sdk/ --ignore-missing-imports

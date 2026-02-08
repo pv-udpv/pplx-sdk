@@ -51,7 +51,7 @@ For any development task, follow this state machine:
 - Delegate to `spa-expert` for SPA-specific analysis (React state, service workers, CDP)
 - Delegate to `architect` to visualize the design before implementation
 - Delegate to `codegraph` for AST analysis, dependency mapping, or knowledge graph extraction
-- Use `deepwiki` MCP to search documentation for libraries and dependencies
+- Use `deep-wiki` MCP to search documentation for libraries and dependencies
 - Use `context7` MCP for context-aware documentation lookups
 - Study existing patterns in the codebase that relate to the task
 - Read external documentation (library docs, API specs, SSE protocol)
@@ -133,8 +133,10 @@ For any development task, follow this state machine:
 Use MCP servers and discovery standards for documentation lookup during any research phase:
 
 ### MCP Servers
+- **github-rw** — GitHub read-write operations (repos, issues, PRs, files) via Copilot MCP
+- **perplexity_ai** — Perplexity AI search and reasoning
 - **context7** — context-aware library documentation lookup
-- **deepwiki** — search documentation for any GitHub repository via `read_wiki_structure`, `read_wiki_contents`, `ask_question`
+- **deep-wiki** — search documentation for any GitHub repository via `read_wiki_structure`, `read_wiki_contents`, `ask_question`
 - **llms-txt** — search llms.txt files for LLM-optimized docs via `list_llm_txt`, `get_llm_txt`, `search_llm_txt`
 - **fetch** — retrieve any URL content as markdown
 
@@ -145,7 +147,7 @@ Use MCP servers and discovery standards for documentation lookup during any rese
 ### Lookup Priority
 1. Check `llms.txt` at the dependency's docs URL (fastest, most relevant)
 2. Check `.well-known/agentskills.io` for published agent skills
-3. Query `deepwiki` for the dependency's GitHub repo documentation
+3. Query `deep-wiki` for the dependency's GitHub repo documentation
 4. Query `context7` for library-specific context
 5. Fall back to `fetch` for raw documentation URLs
 
