@@ -4,8 +4,9 @@ Provides high-level interfaces for interacting with Perplexity API.
 """
 
 import uuid
+from collections.abc import Generator
 from dataclasses import dataclass, field
-from typing import Any, Dict, Generator, List, Optional
+from typing import Any
 
 import httpx
 
@@ -15,7 +16,6 @@ from pplx_sdk.domain.entries import EntriesService
 from pplx_sdk.domain.memories import MemoriesService
 from pplx_sdk.domain.models import Entry, MessageChunk, Thread, ThreadAccess
 from pplx_sdk.domain.threads import ThreadsService
-from pplx_sdk.transport.http import HttpTransport
 from pplx_sdk.transport.sse import SSETransport
 
 
@@ -28,14 +28,15 @@ class PerplexityClient:
         >>> client = PerplexityClient(auth_token="session-token")
         >>> conv = client.new_conversation(title="Research")
         >>> entry = conv.ask("What is quantum computing?")
+
     """
 
     def __init__(
         self,
         api_base: str = "https://www.perplexity.ai",
-        auth_token: Optional[str] = None,
+        auth_token: str | None = None,
         timeout: float = 30.0,
-        default_headers: Optional[Dict[str, str]] = None,
+        default_headers: dict[str, str] | None = None,
     ) -> None:
         """Initialize Perplexity client.
 
@@ -44,6 +45,7 @@ class PerplexityClient:
             auth_token: Authentication token (session ID from cookies)
             timeout: Request timeout in seconds
             default_headers: Additional headers for all requests
+
         """
         self.api_base = api_base
         self.auth_token = auth_token
@@ -71,11 +73,12 @@ class PerplexityClient:
         self._collections_service = CollectionsService()
         self._articles_service = ArticlesService()
 
-    def _build_headers(self) -> Dict[str, str]:
+    def _build_headers(self) -> dict[str, str]:
         """Build default headers for requests.
 
         Returns:
             Dictionary of default headers
+
         """
         headers = {
             "User-Agent": "pplx-sdk/0.1.0",
@@ -96,6 +99,7 @@ class PerplexityClient:
 
         Returns:
             ThreadsService instance
+
         """
         return self._threads_service
 
@@ -105,6 +109,7 @@ class PerplexityClient:
 
         Returns:
             EntriesService instance
+
         """
         return self._entries_service
 
@@ -114,6 +119,7 @@ class PerplexityClient:
 
         Returns:
             MemoriesService instance
+
         """
         return self._memories_service
 
@@ -123,6 +129,7 @@ class PerplexityClient:
 
         Returns:
             CollectionsService instance
+
         """
         return self._collections_service
 
@@ -132,10 +139,11 @@ class PerplexityClient:
 
         Returns:
             ArticlesService instance
+
         """
         return self._articles_service
 
-    def new_conversation(self, title: Optional[str] = None) -> "Conversation":
+    def new_conversation(self, title: str | None = None) -> "Conversation":
         """Create a new conversation.
 
         Args:
@@ -143,6 +151,7 @@ class PerplexityClient:
 
         Returns:
             Conversation instance
+
         """
         # Generate new context UUID
         context_uuid = str(uuid.uuid4())
@@ -168,6 +177,7 @@ class PerplexityClient:
 
         Raises:
             ValueError: If thread not found
+
         """
         # Try to get thread
         thread = self._threads_service.get(slug_or_uuid)
@@ -203,11 +213,12 @@ class Conversation:
         ...     print(chunk.text, end="")
         >>> entry = conv.ask("Tell me more")
         >>> forked = conv.fork(from_entry=entry)
+
     """
 
     client: PerplexityClient
     thread: Thread
-    entries: List[Entry] = field(default_factory=list)
+    entries: list[Entry] = field(default_factory=list)
 
     @property
     def context_uuid(self) -> str:
@@ -215,6 +226,7 @@ class Conversation:
 
         Returns:
             Context UUID string
+
         """
         return self.thread.context_uuid
 
@@ -223,7 +235,7 @@ class Conversation:
         query: str,
         mode: str = "concise",
         model_preference: str = "pplx-70b-chat",
-        sources: Optional[list[str]] = None,
+        sources: list[str] | None = None,
         **kwargs: Any,
     ) -> Generator[MessageChunk, None, None]:
         """Ask a question and stream the response.
@@ -237,6 +249,7 @@ class Conversation:
 
         Yields:
             MessageChunk objects from SSE stream
+
         """
         # Get parent entry UUID if we have entries
         parent_entry_uuid = None
@@ -259,7 +272,7 @@ class Conversation:
         query: str,
         mode: str = "concise",
         model_preference: str = "pplx-70b-chat",
-        sources: Optional[list[str]] = None,
+        sources: list[str] | None = None,
         **kwargs: Any,
     ) -> Entry:
         """Ask a question and return the complete entry.
@@ -275,6 +288,7 @@ class Conversation:
 
         Returns:
             Complete Entry object
+
         """
         # Get parent entry UUID if we have entries
         parent_entry_uuid = None
@@ -297,7 +311,7 @@ class Conversation:
 
         return entry
 
-    def fork(self, from_entry: Optional[Entry] = None) -> "Conversation":
+    def fork(self, from_entry: Entry | None = None) -> "Conversation":
         """Fork the conversation at a specific entry.
 
         Creates a new conversation with entries up to the fork point.
@@ -307,6 +321,7 @@ class Conversation:
 
         Returns:
             New Conversation instance
+
         """
         # Determine fork point
         if from_entry is None:
@@ -335,13 +350,15 @@ class Conversation:
 
         Args:
             collection_id: Target collection ID
+
         """
         self.client.collections.save_thread(self.context_uuid, collection_id)
 
-    def to_article(self) -> Optional[dict]:
+    def to_article(self) -> dict | None:
         """Convert conversation to an article.
 
         Returns:
             Article data if successful, None otherwise
+
         """
         return self.client.articles.from_thread(self.context_uuid)

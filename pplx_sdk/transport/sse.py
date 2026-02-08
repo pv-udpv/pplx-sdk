@@ -6,11 +6,12 @@ Handles SSE protocol parsing and yields MessageChunk objects.
 from __future__ import annotations
 
 import json
-from typing import Any, Dict, Generator, Optional
+from collections.abc import Generator
+from typing import Any
 
 import httpx
 
-from pplx_sdk.core.exceptions import StreamingError, TransportError
+from pplx_sdk.core.exceptions import TransportError
 from pplx_sdk.domain.models import MessageChunk
 
 
@@ -30,6 +31,7 @@ class SSETransport:
         >>> transport = SSETransport(client, "/rest/sse/perplexity.ask")
         >>> for chunk in transport.stream(query="test", context_uuid="uuid"):
         ...     print(chunk.type, chunk.data)
+
     """
 
     def __init__(self, client: httpx.Client, endpoint: str) -> None:
@@ -38,6 +40,7 @@ class SSETransport:
         Args:
             client: httpx.Client instance for making requests
             endpoint: SSE endpoint path (e.g., /rest/sse/perplexity.ask)
+
         """
         self.client = client
         self.endpoint = endpoint
@@ -49,10 +52,10 @@ class SSETransport:
         frontend_uuid: str,
         mode: str = "concise",
         model_preference: str = "pplx-70b-chat",
-        sources: Optional[list[str]] = None,
-        parent_entry_uuid: Optional[str] = None,
-        cursor: Optional[str] = None,
-        resume_entry_uuids: Optional[list[str]] = None,
+        sources: list[str] | None = None,
+        parent_entry_uuid: str | None = None,
+        cursor: str | None = None,
+        resume_entry_uuids: list[str] | None = None,
         **extra: Any,
     ) -> Generator[MessageChunk, None, None]:
         """Stream SSE events from Perplexity API.
@@ -74,9 +77,10 @@ class SSETransport:
 
         Raises:
             httpx.HTTPError: On HTTP errors
+
         """
         # Build request payload
-        payload: Dict[str, Any] = {
+        payload: dict[str, Any] = {
             "query_str": query,
             "context_uuid": context_uuid,
             "frontend_uuid": frontend_uuid,
@@ -118,7 +122,7 @@ class SSETransport:
                 ) from exc
 
             # Parse SSE stream
-            event_type: Optional[str] = None
+            event_type: str | None = None
             data_buffer: list[str] = []
 
             for line in response.iter_lines():
@@ -162,6 +166,7 @@ class SSETransport:
 
         Returns:
             MessageChunk object
+
         """
         # Parse JSON data
         try:

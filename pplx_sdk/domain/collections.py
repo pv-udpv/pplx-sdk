@@ -12,6 +12,7 @@ class CollectionsService:
     Example:
         >>> collections = CollectionsService()
         >>> collections.save_thread(thread_uuid, collection_id)
+
     """
 
     def __init__(self) -> None:
@@ -27,5 +28,6 @@ class CollectionsService:
 
         Note:
             Stub implementation - raises NotImplementedError
+
         """
         raise NotImplementedError("Collection save not yet implemented")

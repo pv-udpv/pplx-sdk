@@ -21,23 +21,23 @@ from pplx_sdk.core.types import (
 )
 
 __all__ = [
-    # Exceptions
-    "PerplexitySDKError",
-    "TransportError",
     "AuthenticationError",
-    "RateLimitError",
-    "StreamingError",
-    "ValidationError",
-    # Protocols
-    "Transport",
-    "StreamParser",
+    "EntryStatus",
     # Types
     "Headers",
-    "QueryParams",
     "JSONData",
     "Mode",
-    "SearchFocus",
     "ModelPreference",
-    "EntryStatus",
+    # Exceptions
+    "PerplexitySDKError",
+    "QueryParams",
+    "RateLimitError",
     "SSEEventType",
+    "SearchFocus",
+    "StreamParser",
+    "StreamingError",
+    # Protocols
+    "Transport",
+    "TransportError",
+    "ValidationError",
 ]

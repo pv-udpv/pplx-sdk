@@ -1,7 +1,5 @@
 """Tests for shared retry module."""
 
-import time
-
 import pytest
 
 from pplx_sdk.core.exceptions import TransportError

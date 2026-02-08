@@ -1,10 +1,9 @@
 """SSE parsing utilities."""
 
 import json
-from typing import Optional, Tuple
 
 
-def parse_sse_line(line: str) -> Tuple[Optional[str], Optional[str]]:
+def parse_sse_line(line: str) -> tuple[str | None, str | None]:
     """Parse a single SSE line.
 
     Args:
@@ -17,6 +16,7 @@ def parse_sse_line(line: str) -> Tuple[Optional[str], Optional[str]]:
         field: value
         :comment
         (empty line)
+
     """
     line = line.strip()
 
@@ -44,6 +44,7 @@ def parse_sse_data(data: str) -> dict:
 
     Returns:
         Parsed dictionary or {"text": data} if not valid JSON
+
     """
     try:
         parsed: dict = json.loads(data)

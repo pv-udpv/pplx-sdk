@@ -12,6 +12,7 @@ class MemoriesService:
     Example:
         >>> memories = MemoriesService()
         >>> memories.store("key", "value")
+
     """
 
     def __init__(self) -> None:
@@ -27,5 +28,6 @@ class MemoriesService:
 
         Note:
             Stub implementation - raises NotImplementedError
+
         """
         raise NotImplementedError("Memory storage not yet implemented")

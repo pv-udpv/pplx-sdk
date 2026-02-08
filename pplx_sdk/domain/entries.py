@@ -5,8 +5,9 @@ Provides high-level API for asking questions and streaming responses.
 
 from __future__ import annotations
 
-from typing import Any, Dict, Generator, Optional
 import uuid
+from collections.abc import Generator
+from typing import Any
 
 from pplx_sdk.domain.models import Entry, MessageChunk, StreamStatus
 from pplx_sdk.transport.sse import SSETransport
@@ -23,6 +24,7 @@ class EntriesService:
         ...     print(chunk.text, end="")
         >>> entry = entries.ask("What is AI?", context_uuid="uuid")
         >>> print(entry.text_completed)
+
     """
 
     def __init__(self, sse_transport: SSETransport) -> None:
@@ -30,6 +32,7 @@ class EntriesService:
 
         Args:
             sse_transport: SSETransport instance for streaming
+
         """
         self.transport = sse_transport
 
@@ -39,9 +42,9 @@ class EntriesService:
         context_uuid: str,
         mode: str = "concise",
         model_preference: str = "pplx-70b-chat",
-        sources: Optional[list[str]] = None,
-        parent_entry_uuid: Optional[str] = None,
-        frontend_uuid: Optional[str] = None,
+        sources: list[str] | None = None,
+        parent_entry_uuid: str | None = None,
+        frontend_uuid: str | None = None,
         **extra: Any,
     ) -> Generator[MessageChunk, None, None]:
         """Stream a question and yield SSE events.
@@ -61,6 +64,7 @@ class EntriesService:
 
         Raises:
             httpx.HTTPError: On HTTP errors
+
         """
         # Generate frontend UUID if not provided
         if not frontend_uuid:
@@ -84,9 +88,9 @@ class EntriesService:
         context_uuid: str,
         mode: str = "concise",
         model_preference: str = "pplx-70b-chat",
-        sources: Optional[list[str]] = None,
-        parent_entry_uuid: Optional[str] = None,
-        frontend_uuid: Optional[str] = None,
+        sources: list[str] | None = None,
+        parent_entry_uuid: str | None = None,
+        frontend_uuid: str | None = None,
         **extra: Any,
     ) -> Entry:
         """Ask a question and return the complete entry.
@@ -109,13 +113,14 @@ class EntriesService:
         Raises:
             httpx.HTTPError: On HTTP errors
             ValueError: If stream fails or no final response received
+
         """
         # Generate frontend UUID if not provided
         if not frontend_uuid:
             frontend_uuid = str(uuid.uuid4())
 
         # Collect stream
-        entry_data: Dict[str, Any] = {
+        entry_data: dict[str, Any] = {
             "frontend_uuid": frontend_uuid,
             "context_uuid": context_uuid,
             "query": query,

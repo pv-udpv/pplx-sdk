@@ -6,7 +6,8 @@ Provides resilient streaming with automatic retry and resume capabilities.
 from __future__ import annotations
 
 import time
-from typing import Any, Dict, Generator, Optional
+from collections.abc import Generator
+from typing import Any
 
 from pplx_sdk.core.exceptions import StreamingError, TransportError
 from pplx_sdk.domain.models import MessageChunk
@@ -27,6 +28,7 @@ class StreamManager:
         ... )
         >>> for chunk in manager.stream(query="test", context_uuid="uuid"):
         ...     print(chunk.text)
+
     """
 
     def __init__(
@@ -43,6 +45,7 @@ class StreamManager:
             max_retries: Maximum number of retry attempts
             retry_backoff_ms: Base backoff time in milliseconds
             timeout_ms: Request timeout in milliseconds
+
         """
         self.transport = transport
         self.max_retries = max_retries
@@ -56,8 +59,8 @@ class StreamManager:
         frontend_uuid: str,
         mode: str = "concise",
         model_preference: str = "pplx-70b-chat",
-        sources: Optional[list[str]] = None,
-        parent_entry_uuid: Optional[str] = None,
+        sources: list[str] | None = None,
+        parent_entry_uuid: str | None = None,
         reconnectable: bool = True,
         **extra: Any,
     ) -> Generator[MessageChunk, None, None]:
@@ -79,9 +82,10 @@ class StreamManager:
 
         Raises:
             StreamingError: If all retries exhausted
+
         """
         retry_count = 0
-        cursor: Optional[str] = None
+        cursor: str | None = None
         resume_entry_uuids: list[str] = []
 
         while retry_count <= self.max_retries:
@@ -150,7 +154,7 @@ class StreamManager:
         query: str,
         context_uuid: str,
         frontend_uuid: str,
-        timeout_ms: Optional[int] = None,
+        timeout_ms: int | None = None,
         **kwargs: Any,
     ) -> Generator[MessageChunk, None, None]:
         """Stream with timeout enforcement.
@@ -167,6 +171,7 @@ class StreamManager:
 
         Raises:
             TimeoutError: If stream exceeds timeout
+
         """
         timeout = (timeout_ms or self.timeout_ms) / 1000.0
         start_time = time.time()
@@ -179,6 +184,6 @@ class StreamManager:
         ):
             # Check timeout
             if time.time() - start_time > timeout:
-                raise TimeoutError(f"Stream exceeded timeout of {timeout}s")  # noqa: TRY003
+                raise TimeoutError(f"Stream exceeded timeout of {timeout}s")
 
             yield chunk
