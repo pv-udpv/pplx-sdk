@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from typing import Any, ContextManager, Protocol, runtime_checkable
+from contextlib import AbstractContextManager
+from typing import Any, Protocol, runtime_checkable
 
 import httpx
 
@@ -28,7 +29,7 @@ class Transport(Protocol):
         path: str,
         json: dict[str, Any] | None = None,
         headers: dict[str, str] | None = None,
-    ) -> ContextManager[httpx.Response]:
+    ) -> AbstractContextManager[httpx.Response]:
         """Make streaming HTTP request."""
         ...
 
