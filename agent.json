@@ -1,0 +1,142 @@
+{
+  "name": "pplx-sdk-agent",
+  "description": "Production-grade development agent for pplx-sdk — a Python SDK for Perplexity AI with SSE streaming and OpenAI compatibility.",
+  "version": "1.0.0",
+  "skills": [
+    {
+      "name": "code-review",
+      "path": "skills/code-review/SKILL.md",
+      "description": "Review code changes against pplx-sdk architecture conventions, type safety, error handling, and testing standards."
+    },
+    {
+      "name": "test-fix",
+      "path": "skills/test-fix/SKILL.md",
+      "description": "Diagnose and fix failing pytest tests in the pplx-sdk project, following existing test patterns and conventions."
+    },
+    {
+      "name": "scaffold-module",
+      "path": "skills/scaffold-module/SKILL.md",
+      "description": "Scaffold new modules and components for pplx-sdk following the layered architecture and established code patterns."
+    },
+    {
+      "name": "sse-streaming",
+      "path": "skills/sse-streaming/SKILL.md",
+      "description": "Implement and debug SSE (Server-Sent Events) streaming for the Perplexity AI API, including parsing, reconnection, and retry logic."
+    },
+    {
+      "name": "reverse-engineer",
+      "path": "skills/reverse-engineer/SKILL.md",
+      "description": "Reverse engineer Perplexity AI web APIs — intercept browser traffic, decode undocumented endpoints, map request/response schemas, extract auth flows, and translate discoveries into SDK code."
+    },
+    {
+      "name": "architecture",
+      "path": "skills/architecture/SKILL.md",
+      "description": "Visualize and document pplx-sdk system architecture with Mermaid diagrams — layer maps, data flow, dependency graphs, sequence diagrams, and component relationships."
+    },
+    {
+      "name": "spa-reverse-engineer",
+      "path": "skills/spa-reverse-engineer/SKILL.md",
+      "description": "Reverse engineer Single Page Applications built with React + Vite + Workbox — analyze SPA internals via Chrome DevTools Protocol (CDP), write browser extensions, intercept service workers, and extract runtime state for SDK integration."
+    },
+    {
+      "name": "code-analysis",
+      "path": "skills/code-analysis/SKILL.md",
+      "description": "Deep code analysis for pplx-sdk — parse Python AST, build dependency graphs, extract knowledge graphs, detect patterns, and generate actionable insights about code structure, complexity, and relationships."
+    },
+    {
+      "name": "pplx-sdk-dev",
+      "path": "skills/pplx-sdk-dev/SKILL.md",
+      "description": "Meta-skill for pplx-sdk development. Orchestrates code review, testing, scaffolding, SSE streaming, and Python best practices into a unified workflow."
+    }
+  ],
+  "tasks": {
+    "directory": "tasks",
+    "actions": [
+      {
+        "name": "code-review",
+        "path": "tasks/code-review.json",
+        "agent_type": "review",
+        "skill": "code-review"
+      },
+      {
+        "name": "test-fix",
+        "path": "tasks/test-fix.json",
+        "agent_type": "test",
+        "skill": "test-fix"
+      },
+      {
+        "name": "scaffold-module",
+        "path": "tasks/scaffold-module.json",
+        "agent_type": "implement",
+        "skill": "scaffold-module"
+      },
+      {
+        "name": "sse-streaming",
+        "path": "tasks/sse-streaming.json",
+        "agent_type": "implement",
+        "skill": "sse-streaming"
+      },
+      {
+        "name": "reverse-engineer",
+        "path": "tasks/reverse-engineer.json",
+        "agent_type": "explore",
+        "skill": "reverse-engineer"
+      },
+      {
+        "name": "architecture",
+        "path": "tasks/architecture.json",
+        "agent_type": "analyze",
+        "skill": "architecture"
+      },
+      {
+        "name": "code-analysis",
+        "path": "tasks/code-analysis.json",
+        "agent_type": "analyze",
+        "skill": "code-analysis"
+      },
+      {
+        "name": "explore",
+        "path": "tasks/explore.json",
+        "agent_type": "explore",
+        "skill": "pplx-sdk-dev"
+      },
+      {
+        "name": "full-workflow",
+        "path": "tasks/full-workflow.json",
+        "agent_type": "orchestrate",
+        "skill": "pplx-sdk-dev"
+      }
+    ]
+  },
+  "mcpServers": ".copilot/mcp.json",
+  "instructions": ".github/copilot-instructions.md",
+  "agents": {
+    "directory": ".claude/agents",
+    "orchestrator": "orchestrator.md",
+    "subagents": [
+      "code-reviewer.md",
+      "test-runner.md",
+      "scaffolder.md",
+      "sse-expert.md",
+      "reverse-engineer.md",
+      "architect.md",
+      "spa-expert.md",
+      "codegraph.md"
+    ]
+  },
+  "workflows": {
+    "new-feature": ["plan", "explore", "research", "scaffold", "implement", "test", "review", "verify"],
+    "bug-fix": ["reproduce", "research", "diagnose", "fix", "verify"],
+    "sse-streaming": ["research", "implement", "test", "review"],
+    "api-discovery": ["capture", "research", "document", "scaffold", "implement", "test", "review"],
+    "architecture": ["analyze", "research", "diagram", "validate", "document"],
+    "code-analysis": ["parse", "graph", "analyze", "report", "act"]
+  },
+  "constraints": {
+    "python": ">=3.12",
+    "typeChecker": "mypy --strict",
+    "linter": "ruff",
+    "testRunner": "pytest",
+    "layerOrder": ["core", "shared", "transport", "domain", "client"]
+  }
+}

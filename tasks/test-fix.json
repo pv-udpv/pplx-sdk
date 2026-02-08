@@ -1,0 +1,25 @@
+{
+  "name": "test-fix",
+  "description": "Diagnose and fix failing pytest tests in the pplx-sdk project, following existing test patterns and conventions.",
+  "agent_type": "test",
+  "skill": "test-fix",
+  "skill_path": "skills/test-fix/SKILL.md",
+  "inputs": {
+    "test_path": {
+      "type": "string",
+      "description": "Path to the failing test file or specific test function",
+      "required": true
+    },
+    "error_output": {
+      "type": "string",
+      "description": "The pytest error output or traceback",
+      "required": false
+    }
+  },
+  "outputs": {
+    "diagnosis": "Root cause analysis of the test failure",
+    "fix": "Code changes applied to resolve the failure",
+    "verification": "Test run results after the fix"
+  },
+  "prompt": "Diagnose and fix the failing test. Run the test with pytest -v to capture the traceback. Trace the code path from test to source to identify the root cause. Preserve test intent — never weaken assertions to make tests pass. Use pytest-httpx for HTTP mocking, pytest-asyncio for async tests. Test: {{test_path}}"
+}

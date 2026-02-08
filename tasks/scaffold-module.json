@@ -1,0 +1,30 @@
+{
+  "name": "scaffold-module",
+  "description": "Scaffold new modules and components for pplx-sdk following the layered architecture and established code patterns.",
+  "agent_type": "implement",
+  "skill": "scaffold-module",
+  "skill_path": "skills/scaffold-module/SKILL.md",
+  "inputs": {
+    "module_name": {
+      "type": "string",
+      "description": "Name of the new module to create",
+      "required": true
+    },
+    "layer": {
+      "type": "string",
+      "description": "Target architecture layer (core, shared, transport, domain, client)",
+      "required": true
+    },
+    "purpose": {
+      "type": "string",
+      "description": "What the module does",
+      "required": true
+    }
+  },
+  "outputs": {
+    "source_file": "Path to the created source file",
+    "test_file": "Path to the created test file",
+    "exports": "Updated __init__.py exports"
+  },
+  "prompt": "Create a new module '{{module_name}}' in the '{{layer}}' layer of pplx-sdk. Purpose: {{purpose}}. Include: from __future__ import annotations, proper typing, Google-style docstrings, corresponding test file in tests/, updated __init__.py exports. Verify with mypy and pytest."
+}

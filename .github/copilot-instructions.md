@@ -186,3 +186,90 @@ ruff format .            # Format code
 mypy pplx_sdk            # Type check
 pytest -v                # Run tests
 ```
+
+## Agent & Skill Architecture
+
+> **Two agent worlds run in parallel** in this repository:
+>
+> ### 1. GitHub Copilot Coding Agent (this prompt)
+> - Reads **only** this prompt and MCP config (`.copilot/mcp.json`)
+> - Does **not** load `agent.json`, `tasks/`, or `SKILL.md` files from disk
+> - Skill behaviors are **embedded below** so Copilot can use them directly
+> - Architecture: `prompt + MCP = behavior`
+>
+> ### 2. External agent runners (pplx-sdk, Cline, obra/superpowers)
+> - Load `agent.json` manifest at repository root
+> - Execute task templates from `tasks/*.json`
+> - Read skill definitions from `skills/*/SKILL.md`
+> - Coordinate subagents from `.claude/agents/`
+> - Architecture: `agent.json + tasks + skills + MCP = behavior`
+>
+> ```
+> ┌──────────────────────────┐
+> │  GitHub Coding Agent     │  ← prompt + MCP only
+> │  (this file + mcp.json)  │
+> └──────────┬───────────────┘
+>            │ (capabilities via MCP)
+>            ▼
+> ┌──────────────────────────┐
+> │     MCP Servers          │  ← shared capability layer
+> │  (GitHub, fetch, etc.)   │
+> └──────────┬───────────────┘
+>            │ (also used by)
+>            ▼
+> ┌──────────────────────────┐
+> │  pplx-sdk / Cline runner │  ← tasks + skills + agent.json
+> │  tasks/*.json            │
+> │  skills/                 │
+> │  agent.json              │
+> └──────────────────────────┘
+> ```
+
+### Available Skills
+
+| Skill | Purpose | When to Apply |
+|-------|---------|---------------|
+| `code-review` | Review changes against architecture conventions, type safety, error handling | PR reviews, post-implementation |
+| `test-fix` | Diagnose and fix failing pytest tests following existing patterns | Test failures, CI red |
+| `scaffold-module` | Create new modules per layered architecture | New features, new endpoints |
+| `sse-streaming` | SSE protocol implementation, parsing, reconnection, retry | Streaming features |
+| `reverse-engineer` | Intercept browser traffic, decode undocumented API endpoints | API discovery |
+| `architecture` | Mermaid diagrams — layer maps, data flow, dependency graphs | Design docs, onboarding |
+| `code-analysis` | AST parsing, dependency graphs, knowledge graphs, pattern detection | Code quality, refactoring |
+
+### Skill Behaviors (Embedded)
+
+When performing **code review**, verify:
+- Imports respect `core → shared → transport → domain → client` layer order
+- All public APIs have complete type annotations and Google-style docstrings
+- Custom exceptions from `pplx_sdk.core.exceptions` are used (never bare `Exception`)
+- Tests follow Arrange-Act-Assert with `test_<module>_<behavior>` naming
+
+When **fixing tests**, follow:
+- Run failing test with `pytest <path> -v` to capture traceback
+- Trace the code path from test → source to identify root cause
+- Preserve test intent — never weaken assertions to make tests pass
+- Use `pytest-httpx` for HTTP mocking, `pytest-asyncio` for async tests
+
+When **scaffolding modules**, always:
+- Identify the target architecture layer (core/shared/transport/domain/client)
+- Create source file with `from __future__ import annotations`, proper typing, docstrings
+- Create corresponding test file in `tests/`
+- Update `__init__.py` exports
+- Verify with `mypy pplx_sdk/ && pytest tests/ -v`
+
+When working on **SSE streaming**:
+- Parse SSE format: `event:` and `data:` lines, blank line separates events
+- Use cursor-based resumption for reconnection
+- Apply `RetryConfig` with exponential backoff for transient failures
+- Handle `answer_chunk` (partial tokens) and `final_response` (complete entry) event types
+
+### Development Workflows
+
+**New Feature**: plan → explore → research → scaffold → implement → test → review → verify
+
+**Bug Fix**: reproduce → research → diagnose → fix → verify
+
+**SSE/Streaming**: research → implement → test → review
+
+**API Discovery**: capture → research → document → scaffold → implement → test → review

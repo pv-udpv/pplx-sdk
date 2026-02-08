@@ -1,0 +1,24 @@
+{
+  "name": "sse-streaming",
+  "description": "Implement and debug SSE (Server-Sent Events) streaming for the Perplexity AI API, including parsing, reconnection, and retry logic.",
+  "agent_type": "implement",
+  "skill": "sse-streaming",
+  "skill_path": "skills/sse-streaming/SKILL.md",
+  "inputs": {
+    "task": {
+      "type": "string",
+      "description": "What to implement or fix (e.g., 'add reconnection logic', 'parse new event type')",
+      "required": true
+    },
+    "endpoint": {
+      "type": "string",
+      "description": "API endpoint for the SSE stream",
+      "required": false
+    }
+  },
+  "outputs": {
+    "implementation": "Code changes for SSE streaming",
+    "test_results": "Test run results"
+  },
+  "prompt": "Work on SSE streaming for pplx-sdk. Task: {{task}}. Parse SSE format (event: and data: lines, blank line separates events). Use cursor-based resumption for reconnection. Apply RetryConfig with exponential backoff for transient failures. Handle answer_chunk (partial tokens) and final_response (complete entry) event types."
+}

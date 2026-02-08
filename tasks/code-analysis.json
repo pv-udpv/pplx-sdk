@@ -1,0 +1,25 @@
+{
+  "name": "code-analysis",
+  "description": "Deep code analysis for pplx-sdk — parse Python AST, build dependency graphs, extract knowledge graphs, detect patterns.",
+  "agent_type": "analyze",
+  "skill": "code-analysis",
+  "skill_path": "skills/code-analysis/SKILL.md",
+  "inputs": {
+    "target": {
+      "type": "string",
+      "description": "File, directory, or module to analyze",
+      "required": true
+    },
+    "analysis_type": {
+      "type": "string",
+      "description": "Type of analysis (ast, dependency-graph, knowledge-graph, complexity, patterns)",
+      "required": true
+    }
+  },
+  "outputs": {
+    "graph": "Dependency or knowledge graph",
+    "findings": "Analysis findings and actionable insights",
+    "metrics": "Code metrics (complexity, coupling, etc.)"
+  },
+  "prompt": "Analyze the pplx-sdk codebase. Target: {{target}}. Analysis type: {{analysis_type}}. Parse Python AST, build dependency graphs, detect patterns (circular deps, layer violations, dead code, complexity hotspots), and generate actionable insights."
+}

@@ -371,6 +371,165 @@ pplx-sdk/
     └── advanced_retry.py              # Custom retry logic
 ```
 
+## Agent & Subagent Architecture
+
+pplx-sdk includes a multi-agent development system with specialist subagents coordinated by an orchestrator. There are **three ways** to use it depending on your environment.
+
+### Architecture Overview
+
+```
+┌──────────────────────────────┐
+│  GitHub Copilot Coding Agent │  ← prompt + MCP only
+│  .github/copilot-            │     (no agent.json, no tasks)
+│    instructions.md           │
+│  .copilot/mcp.json           │
+└──────────────┬───────────────┘
+               │ (capabilities via MCP)
+               ▼
+┌──────────────────────────────┐
+│     MCP Servers              │  ← shared capability layer
+│  (fetch, context7,           │
+│   deepwiki, llms-txt)        │
+└──────────────┬───────────────┘
+               │ (also used by)
+               ▼
+┌──────────────────────────────┐
+│  External runners            │  ← agent.json + tasks + skills
+│  (Cline, obra/superpowers)   │
+│  tasks/*.json                │
+│  skills/*/SKILL.md           │
+│  .claude/agents/*.md         │
+│  agent.json                  │
+└──────────────────────────────┘
+```
+
+### Available Subagents
+
+Each subagent is defined in `.claude/agents/` with restricted tool access and isolated context:
+
+| Subagent | File | Capabilities |
+|----------|------|-------------|
+| `orchestrator` | `.claude/agents/orchestrator.md` | Decomposes tasks, coordinates other subagents |
+| `code-reviewer` | `.claude/agents/code-reviewer.md` | Read-only code review, architecture compliance |
+| `test-runner` | `.claude/agents/test-runner.md` | Run/fix tests, coverage analysis |
+| `scaffolder` | `.claude/agents/scaffolder.md` | Create new modules, files, exports |
+| `sse-expert` | `.claude/agents/sse-expert.md` | SSE streaming, parsing, reconnection |
+| `reverse-engineer` | `.claude/agents/reverse-engineer.md` | API discovery, traffic analysis, schema decoding |
+| `architect` | `.claude/agents/architect.md` | Architecture diagrams, design validation |
+| `spa-expert` | `.claude/agents/spa-expert.md` | SPA reverse engineering (React/Vite/Workbox/CDP) |
+| `codegraph` | `.claude/agents/codegraph.md` | AST parsing, dependency graphs, knowledge graphs |
+
+### Running Subagents
+
+#### Option 1: GitHub Copilot Coding Agent
+
+GitHub Copilot reads the prompt (`.github/copilot-instructions.md`) and MCP config (`.copilot/mcp.json`) — it does **not** load `agent.json`, tasks, or skills from disk. Skill behaviors are embedded directly in the prompt.
+
+To use skills with Copilot, just describe what you need. The embedded behaviors guide it automatically:
+
+```
+# In a GitHub Copilot session:
+"Review pplx_sdk/transport/http.py for architecture compliance"
+→ Copilot uses embedded code-review behavior
+
+"Fix the failing test in tests/test_transport.py"
+→ Copilot uses embedded test-fix behavior
+
+"Create a new CacheService in the domain layer"
+→ Copilot uses embedded scaffold-module behavior
+```
+
+#### Option 2: External Agent Runners (Cline, obra/superpowers, custom)
+
+External runners load `agent.json` and execute task templates from `tasks/*.json`. Each task wraps a skill into an executable action:
+
+```python
+import json
+
+# Load a task template
+with open("tasks/code-review.json") as f:
+    task = json.load(f)
+
+# Fill in dynamic inputs
+task["inputs"]["target"] = "pplx_sdk/transport/http.py"
+
+# Execute via your runner
+runner.execute(task)
+```
+
+Available task templates:
+
+| Task | Skill | Agent Type | Purpose |
+|------|-------|------------|---------|
+| `tasks/code-review.json` | code-review | review | Review code against architecture conventions |
+| `tasks/test-fix.json` | test-fix | test | Diagnose and fix failing tests |
+| `tasks/scaffold-module.json` | scaffold-module | implement | Create new modules per layered architecture |
+| `tasks/sse-streaming.json` | sse-streaming | implement | Implement SSE streaming features |
+| `tasks/reverse-engineer.json` | reverse-engineer | explore | Discover undocumented API endpoints |
+| `tasks/architecture.json` | architecture | analyze | Generate architecture diagrams |
+| `tasks/code-analysis.json` | code-analysis | analyze | AST parsing and dependency analysis |
+| `tasks/explore.json` | pplx-sdk-dev | explore | General codebase exploration |
+| `tasks/full-workflow.json` | pplx-sdk-dev | orchestrate | End-to-end feature workflow |
+
+#### Option 3: Claude Code with Subagent Delegation
+
+When using Claude Code with the `.claude/agents/` directory, the orchestrator coordinates specialist subagents through workflow phases:
+
+```
+[plan] → [explore] → [research] → [implement] → [test] → [review] → [done]
+```
+
+Skills use `context: fork` for isolated execution. The meta-skill `pplx-sdk-dev` (in `skills/pplx-sdk-dev/SKILL.md`) activates the orchestrator, which delegates to specialists:
+
+```yaml
+# skills/pplx-sdk-dev/SKILL.md frontmatter
+---
+name: pplx-sdk-dev
+description: Meta-skill that orchestrates all development workflows
+context: fork
+agent: orchestrator
+---
+```
+
+The orchestrator follows predefined workflows based on the task type:
+
+| Workflow | Phases | When to Use |
+|----------|--------|-------------|
+| `new-feature` | plan → explore → research → scaffold → implement → test → review → verify | Building new SDK features |
+| `bug-fix` | reproduce → research → diagnose → fix → verify | Fixing bugs |
+| `sse-streaming` | research → implement → test → review | SSE/streaming work |
+| `api-discovery` | capture → research → document → scaffold → implement → test → review | Reverse engineering endpoints |
+| `architecture` | analyze → research → diagram → validate → document | Architecture diagrams |
+| `code-analysis` | parse → graph → analyze → report → act | Code quality analysis |
+
+### Skills Directory
+
+Skills are defined in `.agents/skills/` and symlinked into `skills/` for convenience. Each contains a `SKILL.md` with YAML frontmatter. Subagent definitions (`.md` files) live separately in `.claude/agents/`.
+
+```
+skills/
+├── code-review/SKILL.md       # Architecture compliance review
+├── test-fix/SKILL.md          # Diagnose and fix test failures
+├── scaffold-module/SKILL.md   # Create new layered modules
+├── sse-streaming/SKILL.md     # SSE implementation patterns
+├── reverse-engineer/SKILL.md  # API discovery from traffic
+├── architecture/SKILL.md      # Mermaid diagrams
+├── code-analysis/SKILL.md     # AST parsing and graphs
+├── spa-reverse-engineer/SKILL.md  # SPA internals via CDP
+└── pplx-sdk-dev/SKILL.md     # Meta-skill (orchestrator)
+```
+
+### MCP Servers
+
+All agent environments share MCP servers defined in `.copilot/mcp.json`:
+
+| Server | Package | Purpose |
+|--------|---------|---------|
+| `fetch` | `@anthropic-ai/mcp-fetch` | Fetch any URL as markdown |
+| `context7` | `@upstash/context7-mcp` | Context-aware library docs |
+| `deepwiki` | `mcp-deepwiki` | GitHub repo documentation search |
+| `llms-txt` | `@mcp-get-community/server-llm-txt` | LLM-optimized docs via llms.txt |
+
 ## Development
 
 ### Setup
