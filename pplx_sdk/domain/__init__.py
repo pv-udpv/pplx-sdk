@@ -8,12 +8,12 @@ from pplx_sdk.domain.models import Entry, MessageChunk, Thread
 from pplx_sdk.domain.threads import ThreadsService
 
 __all__ = [
-    "Thread",
-    "Entry",
-    "MessageChunk",
-    "ThreadsService",
-    "EntriesService",
-    "MemoriesService",
-    "CollectionsService",
     "ArticlesService",
+    "CollectionsService",
+    "EntriesService",
+    "Entry",
+    "MemoriesService",
+    "MessageChunk",
+    "Thread",
+    "ThreadsService",
 ]

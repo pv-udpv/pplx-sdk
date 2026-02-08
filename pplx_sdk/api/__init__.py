@@ -7,7 +7,7 @@ from pplx_sdk.api.oai_models import (
 )
 
 __all__ = [
+    "ChatCompletionChunk",
     "ChatCompletionRequest",
     "ChatCompletionResponse",
-    "ChatCompletionChunk",
 ]

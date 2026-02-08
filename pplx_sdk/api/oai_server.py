@@ -6,18 +6,18 @@ Wraps Perplexity API with OpenAI's /v1/chat/completions format.
 import json
 import os
 import time
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator, Optional
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import StreamingResponse
 
 from pplx_sdk.api.oai_models import (
     MODEL_MAPPING,
+    ChatCompletionChoice,
     ChatCompletionChunk,
     ChatCompletionChunkChoice,
     ChatCompletionChunkDelta,
-    ChatCompletionChoice,
     ChatCompletionRequest,
     ChatCompletionResponse,
     ChatMessage,
@@ -27,7 +27,7 @@ from pplx_sdk.api.oai_models import (
 from pplx_sdk.client import PerplexityClient
 
 # Global client instance (initialized on startup)
-_client: Optional[PerplexityClient] = None
+_client: PerplexityClient | None = None
 
 
 def get_client() -> PerplexityClient:
@@ -38,6 +38,7 @@ def get_client() -> PerplexityClient:
 
     Raises:
         HTTPException: If client not initialized
+
     """
     global _client
     if _client is None:
@@ -93,6 +94,7 @@ async def health_check() -> dict:
 
     Returns:
         Health status
+
     """
     return {"status": "healthy", "service": "pplx-sdk-oai-adapter"}
 
@@ -103,11 +105,12 @@ async def list_models() -> ModelList:
 
     Returns:
         ModelList with available models
+
     """
     models = []
     timestamp = int(time.time())
 
-    for model_id, config in MODEL_MAPPING.items():
+    for model_id, _config in MODEL_MAPPING.items():
         models.append(
             Model(
                 id=model_id,
@@ -135,6 +138,7 @@ async def chat_completions(
 
     Raises:
         HTTPException: On errors
+
     """
     try:
         client = get_client()

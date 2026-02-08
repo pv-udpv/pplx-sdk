@@ -4,8 +4,9 @@ from __future__ import annotations
 
 import random
 import time
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Callable, Optional, TypeVar
+from typing import TypeVar
 
 from pplx_sdk.core.exceptions import TransportError
 
@@ -22,6 +23,7 @@ class RetryConfig:
         max_backoff_ms: Maximum backoff delay in milliseconds
         backoff_multiplier: Multiplier for exponential backoff
         jitter: Whether to add random jitter to backoff
+
     """
 
     max_retries: int = 3
@@ -38,6 +40,7 @@ class RetryConfig:
 
         Returns:
             Delay in seconds
+
         """
         backoff = min(
             self.initial_backoff_ms * (self.backoff_multiplier**attempt),
@@ -52,9 +55,9 @@ class RetryConfig:
         return backoff / 1000.0  # Convert to seconds
 
 
-def retry_with_backoff(
+def retry_with_backoff[T](
     func: Callable[..., T],
-    config: Optional[RetryConfig] = None,
+    config: RetryConfig | None = None,
     retryable_exceptions: tuple[type[Exception], ...] = (TransportError,),
 ) -> T:
     """Retry function with exponential backoff.
@@ -69,9 +72,10 @@ def retry_with_backoff(
 
     Raises:
         Last exception if all retries exhausted
+
     """
     config = config or RetryConfig()
-    last_exception: Optional[Exception] = None
+    last_exception: Exception | None = None
 
     for attempt in range(config.max_retries + 1):
         try:

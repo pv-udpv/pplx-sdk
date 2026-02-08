@@ -3,8 +3,6 @@
 Provides API for creating, retrieving, and managing threads.
 """
 
-from typing import Optional
-
 from pplx_sdk.domain.models import Thread
 
 
@@ -16,13 +14,14 @@ class ThreadsService:
     Example:
         >>> threads = ThreadsService()
         >>> thread = threads.get("thread-slug-or-uuid")
+
     """
 
     def __init__(self) -> None:
         """Initialize threads service."""
         pass
 
-    def get(self, slug_or_uuid: str) -> Optional[Thread]:
+    def get(self, slug_or_uuid: str) -> Thread | None:
         """Get a thread by slug or UUID.
 
         Args:
@@ -33,11 +32,12 @@ class ThreadsService:
 
         Note:
             Stub implementation - returns None
+
         """
         # TODO: Implement thread retrieval
         return None
 
-    def create(self, title: Optional[str] = None) -> Thread:
+    def create(self, title: str | None = None) -> Thread:
         """Create a new thread.
 
         Args:
@@ -48,5 +48,6 @@ class ThreadsService:
 
         Note:
             Stub implementation - raises NotImplementedError
+
         """
         raise NotImplementedError("Thread creation not yet implemented")

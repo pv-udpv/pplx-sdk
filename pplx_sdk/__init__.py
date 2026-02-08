@@ -26,16 +26,16 @@ __author__ = "Perplexity AI Reverse Engineers"
 __license__ = "MIT"
 
 __all__ = [
-    "PerplexityClient",
+    "AuthenticationError",
     "Conversation",
-    "Thread",
     "Entry",
     "MessageChunk",
+    "PerplexityClient",
     # Exceptions
     "PerplexitySDKError",
-    "TransportError",
-    "AuthenticationError",
     "RateLimitError",
     "StreamingError",
+    "Thread",
+    "TransportError",
     "ValidationError",
 ]

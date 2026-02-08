@@ -2,13 +2,12 @@
 
 import logging
 import sys
-from typing import Optional
 
 
 def get_logger(
     name: str,
     level: int = logging.INFO,
-    format_string: Optional[str] = None,
+    format_string: str | None = None,
 ) -> logging.Logger:
     """Get a configured logger instance.
 
@@ -23,6 +22,7 @@ def get_logger(
     Example:
         >>> logger = get_logger(__name__)
         >>> logger.info("Processing request")
+
     """
     logger = logging.getLogger(name)
     logger.setLevel(level)
@@ -35,9 +35,7 @@ def get_logger(
 
         # Set format
         if not format_string:
-            format_string = (
-                "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-            )
+            format_string = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
         formatter = logging.Formatter(format_string)
         handler.setFormatter(formatter)
@@ -52,6 +50,7 @@ def configure_root_logger(level: int = logging.INFO) -> None:
 
     Args:
         level: Logging level (default: INFO)
+
     """
     logging.basicConfig(
         level=level,

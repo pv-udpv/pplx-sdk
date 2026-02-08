@@ -5,7 +5,7 @@ Provides FastAPI middleware components.
 
 import logging
 import time
-from typing import Callable
+from collections.abc import Callable
 
 from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -31,6 +31,7 @@ class LoggingMiddleware(BaseHTTPMiddleware):
 
         Returns:
             Response object
+
         """
         # Log request
         start_time = time.time()
@@ -53,7 +54,7 @@ class LoggingMiddleware(BaseHTTPMiddleware):
             duration = time.time() - start_time
             logger.error(
                 f"Error: {request.method} {request.url.path} - "
-                f"Duration {duration:.3f}s - Error: {str(e)}"
+                f"Duration {duration:.3f}s - Error: {e!s}"
             )
             raise
 
@@ -74,6 +75,7 @@ class AuthMiddleware(BaseHTTPMiddleware):
 
         Returns:
             Response object
+
         """
         # TODO: Add request-level auth if needed
         # For now, just pass through

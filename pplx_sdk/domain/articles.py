@@ -3,8 +3,6 @@
 Provides API for article generation and management.
 """
 
-from typing import Optional
-
 
 class ArticlesService:
     """Service for managing articles.
@@ -14,13 +12,14 @@ class ArticlesService:
     Example:
         >>> articles = ArticlesService()
         >>> article = articles.from_thread(thread_uuid)
+
     """
 
     def __init__(self) -> None:
         """Initialize articles service."""
         pass
 
-    def from_thread(self, thread_uuid: str) -> Optional[dict]:
+    def from_thread(self, thread_uuid: str) -> dict | None:
         """Convert a thread to an article.
 
         Args:
@@ -31,5 +30,6 @@ class ArticlesService:
 
         Note:
             Stub implementation - raises NotImplementedError
+
         """
         raise NotImplementedError("Article conversion not yet implemented")

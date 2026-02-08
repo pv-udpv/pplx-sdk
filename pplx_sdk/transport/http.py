@@ -3,7 +3,7 @@
 Provides a wrapper around httpx.Client with authentication and configuration.
 """
 
-from typing import Any, ContextManager, Dict, Optional
+from typing import Any, ContextManager
 
 import httpx
 
@@ -24,14 +24,15 @@ class HttpTransport:
         ... )
         >>> with transport:
         ...     response = transport.request("GET", "/api/endpoint")
+
     """
 
     def __init__(
         self,
         base_url: str = "https://www.perplexity.ai",
-        auth_token: Optional[str] = None,
+        auth_token: str | None = None,
         timeout: float = 30.0,
-        default_headers: Optional[Dict[str, str]] = None,
+        default_headers: dict[str, str] | None = None,
     ) -> None:
         """Initialize HTTP transport.
 
@@ -40,6 +41,7 @@ class HttpTransport:
             auth_token: Authentication token (session ID)
             timeout: Request timeout in seconds
             default_headers: Additional headers to include in all requests
+
         """
         self.base_url = base_url
         self.timeout = timeout
@@ -59,7 +61,7 @@ class HttpTransport:
             headers.update(default_headers)
 
         self.default_headers = headers
-        self.client: Optional[httpx.Client] = None
+        self.client: httpx.Client | None = None
 
     def __enter__(self) -> "HttpTransport":
         """Context manager entry."""
@@ -81,9 +83,9 @@ class HttpTransport:
         self,
         method: str,
         path: str,
-        params: Optional[Dict[str, Any]] = None,
-        json: Optional[Dict[str, Any]] = None,
-        headers: Optional[Dict[str, str]] = None,
+        params: dict[str, Any] | None = None,
+        json: dict[str, Any] | None = None,
+        headers: dict[str, str] | None = None,
     ) -> httpx.Response:
         """Make an HTTP request.
 
@@ -101,6 +103,7 @@ class HttpTransport:
             TransportError: If transport not used in context manager or HTTP error
             AuthenticationError: On 401 responses
             RateLimitError: On 429 responses
+
         """
         if not self.client:
             raise TransportError("HttpTransport must be used as context manager")
@@ -144,8 +147,8 @@ class HttpTransport:
         self,
         method: str,
         path: str,
-        json: Optional[Dict[str, Any]] = None,
-        headers: Optional[Dict[str, str]] = None,
+        json: dict[str, Any] | None = None,
+        headers: dict[str, str] | None = None,
     ) -> ContextManager[httpx.Response]:
         """Make a streaming HTTP request.
 
@@ -160,6 +163,7 @@ class HttpTransport:
 
         Raises:
             TransportError: If transport not used in context manager
+
         """
         if not self.client:
             raise TransportError("HttpTransport must be used as context manager")
