@@ -11,6 +11,14 @@ Quick start:
 """
 
 from pplx_sdk.client import Conversation, PerplexityClient
+from pplx_sdk.core.exceptions import (
+    AuthenticationError,
+    PerplexitySDKError,
+    RateLimitError,
+    StreamingError,
+    TransportError,
+    ValidationError,
+)
 from pplx_sdk.domain.models import Entry, MessageChunk, Thread
 
 __version__ = "0.1.0"
@@ -23,4 +31,11 @@ __all__ = [
     "Thread",
     "Entry",
     "MessageChunk",
+    # Exceptions
+    "PerplexitySDKError",
+    "TransportError",
+    "AuthenticationError",
+    "RateLimitError",
+    "StreamingError",
+    "ValidationError",
 ]

@@ -2,7 +2,7 @@
 
 import pytest
 
-from pplx_sdk.utils.auth import (
+from pplx_sdk.shared.auth import (
     extract_token_from_cookies,
     extract_token_from_header,
     get_token_from_env,

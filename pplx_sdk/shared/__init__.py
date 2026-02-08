@@ -1,9 +1,4 @@
-"""Utility functions and helpers.
-
-.. deprecated::
-    Use ``pplx_sdk.shared`` instead. This module re-exports from ``shared``
-    for backward compatibility.
-"""
+"""Shared utilities across SDK."""
 
 from pplx_sdk.shared.auth import extract_token_from_cookies, get_token_from_env
 from pplx_sdk.shared.logging import get_logger

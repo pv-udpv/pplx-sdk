@@ -3,6 +3,7 @@
 import pytest
 from pytest_httpx import HTTPXMock
 
+from pplx_sdk.core.exceptions import TransportError
 from pplx_sdk.transport.http import HttpTransport
 
 
@@ -49,7 +50,7 @@ def test_http_transport_request_without_context_manager(mock_auth_token: str) ->
     """Test HTTP transport raises error when not in context manager."""
     transport = HttpTransport(auth_token=mock_auth_token)
 
-    with pytest.raises(RuntimeError, match="must be used as context manager"):
+    with pytest.raises(TransportError, match="must be used as context manager"):
         transport.request("GET", "/api/test")
 
 
