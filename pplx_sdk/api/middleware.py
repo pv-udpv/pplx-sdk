@@ -1,11 +1,8 @@
-"""Middleware for authentication and logging.
-
-Provides FastAPI middleware components.
-"""
+from __future__ import annotations
 
 import logging
 import time
-from collections.abc import Callable
+from collections.abc import Awaitable, Callable
 
 from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -22,7 +19,9 @@ logger = logging.getLogger("pplx_sdk.api")
 class LoggingMiddleware(BaseHTTPMiddleware):
     """Middleware for logging HTTP requests and responses."""
 
-    async def dispatch(self, request: Request, call_next: Callable) -> Response:
+    async def dispatch(
+        self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
+    ) -> Response:
         """Process request and log details.
 
         Args:
@@ -66,7 +65,9 @@ class AuthMiddleware(BaseHTTPMiddleware):
     This middleware can be extended for request-level auth.
     """
 
-    async def dispatch(self, request: Request, call_next: Callable) -> Response:
+    async def dispatch(
+        self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
+    ) -> Response:
         """Process request with auth checks.
 
         Args:

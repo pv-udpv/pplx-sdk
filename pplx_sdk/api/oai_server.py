@@ -10,7 +10,7 @@ from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import StreamingResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 
 from pplx_sdk.api.oai_models import (
     MODEL_MAPPING,
@@ -126,7 +126,7 @@ async def list_models() -> ModelList:
 async def chat_completions(
     request: ChatCompletionRequest,
     req: Request,
-) -> StreamingResponse:
+) -> StreamingResponse | JSONResponse:
     """OpenAI-compatible chat completions endpoint.
 
     Args:
@@ -270,7 +270,7 @@ async def chat_completions(
                 ],
             )
 
-            return response.model_dump()
+            return JSONResponse(content=response.model_dump())
 
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e)) from e
