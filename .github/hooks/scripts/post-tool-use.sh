@@ -29,15 +29,23 @@ phase = state.get('current_phase', 'ready')
 completed = set(state.get('phases_completed', []))
 
 # Phase transitions based on tool activity
+# ready → exploring (after 3 view calls — reading code)
 if phase == 'ready' and tool_calls.get('view', 0) >= 3:
     state['current_phase'] = 'exploring'
     completed.add('ready')
-elif phase == 'exploring' and tool_calls.get('edit', 0) >= 1:
-    state['current_phase'] = 'implementing'
+# exploring → researching (after 5+ views and grep/search activity)
+elif phase == 'exploring' and tool_calls.get('view', 0) >= 5:
+    state['current_phase'] = 'researching'
     completed.add('exploring')
+# researching → implementing (after first edit — writing code)
+elif phase == 'researching' and tool_calls.get('edit', 0) >= 1:
+    state['current_phase'] = 'implementing'
+    completed.add('researching')
+# implementing → testing (after 2+ bash calls — running tests)
 elif phase == 'implementing' and tool_calls.get('bash', 0) >= 2:
     state['current_phase'] = 'testing'
     completed.add('implementing')
+# testing → reviewing (automatic after testing phase)
 elif phase == 'testing':
     state['current_phase'] = 'reviewing'
     completed.add('testing')

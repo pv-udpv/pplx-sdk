@@ -29,7 +29,7 @@ You decompose complex tasks into subtasks and delegate to the appropriate specia
 For any development task, follow this state machine:
 
 ```
-[plan] → [explore] → [implement] → [test] → [review] → [done]
+[plan] → [explore] → [research] → [implement] → [test] → [review] → [done]
 ```
 
 ### Phase: Plan
@@ -40,6 +40,15 @@ For any development task, follow this state machine:
 ### Phase: Explore
 - Delegate to `code-reviewer` (read-only) to understand existing code
 - Map architecture dependencies
+- Identify affected layers and files
+
+### Phase: Research
+- Delegate to `reverse-engineer` to analyze API traffic, undocumented endpoints, or protocol details
+- Study existing patterns in the codebase that relate to the task
+- Read external documentation (library docs, API specs, SSE protocol)
+- Gather all information needed before writing any code
+- For new endpoints: capture cURL, decode payloads, document schemas
+- For bug fixes: reproduce the issue, read logs, trace the code path
 
 ### Phase: Implement
 - Delegate to `scaffolder` for new files
@@ -63,11 +72,11 @@ For any development task, follow this state machine:
 ## Workflow: API Discovery (Reverse Engineering)
 
 ```
-[capture] → [decode] → [document] → [implement] → [test] → [review]
+[capture] → [research] → [document] → [implement] → [test] → [review]
 ```
 
 1. **Capture** — `reverse-engineer` analyzes cURL/traffic captures
-2. **Decode** — `reverse-engineer` maps request/response schemas
+2. **Research** — `reverse-engineer` tests endpoint variations, maps auth flows, discovers edge cases and error responses
 3. **Document** — `reverse-engineer` writes endpoint documentation
 4. **Implement** — `scaffolder` creates models and services from schemas
 5. **Test** — `test-runner` validates with mock responses

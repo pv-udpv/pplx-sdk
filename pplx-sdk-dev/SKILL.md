@@ -89,27 +89,29 @@ This meta-skill composes the following skills. Apply them in the order shown bas
 ## Workflow: New Feature
 
 ```
-[plan] → [explore] → [implement] → [test] → [review] → [done]
+[plan] → [explore] → [research] → [implement] → [test] → [review] → [done]
 ```
 
 1. **Plan** — `orchestrator` decomposes the task, identifies target layer
-2. **Explore** — `code-reviewer` (read-only fork) analyzes existing code
-3. **Scaffold** — `scaffolder` (fork) creates files from templates
-4. **Implement** — `sse-expert` or `scaffolder` (fork) writes the code
-5. **Test** — `test-runner` (fork) runs pytest, fixes failures
-6. **Review** — `code-reviewer` (fork) validates architecture compliance
-7. **Verify** — `ruff check --fix . && ruff format . && mypy pplx_sdk/ && pytest -v`
+2. **Explore** — `code-reviewer` (read-only fork) analyzes existing code and dependencies
+3. **Research** — `reverse-engineer` or `sse-expert` (fork) studies API behavior, reads docs, gathers context needed before implementation
+4. **Scaffold** — `scaffolder` (fork) creates files from templates
+5. **Implement** — `sse-expert` or `scaffolder` (fork) writes the code
+6. **Test** — `test-runner` (fork) runs pytest, fixes failures
+7. **Review** — `code-reviewer` (fork) validates architecture compliance
+8. **Verify** — `ruff check --fix . && ruff format . && mypy pplx_sdk/ && pytest -v`
 
 ## Workflow: Bug Fix
 
 1. **Reproduce** — `test-runner` (fork) runs failing test with `-v`
-2. **Diagnose** — `test-runner` reads traceback, identifies root cause
-3. **Fix** — `test-runner` edits source/test, applies `python-error-handling` patterns
-4. **Verify** — `test-runner` runs full suite
+2. **Research** — `code-reviewer` (fork) traces the code path, reads related modules and tests
+3. **Diagnose** — `test-runner` reads traceback, identifies root cause
+4. **Fix** — `test-runner` edits source/test, applies `python-error-handling` patterns
+5. **Verify** — `test-runner` runs full suite
 
 ## Workflow: SSE/Streaming Work
 
-1. **Understand** — `sse-expert` (fork) reviews protocol and existing transport code
+1. **Research** — `sse-expert` (fork) reviews SSE protocol spec, existing transport code, and API response patterns
 2. **Implement** — `sse-expert` writes streaming code, applies `async-python-patterns`
 3. **Test** — `test-runner` (fork) runs tests with mock SSE responses
 4. **Review** — `code-reviewer` (fork) validates transport layer compliance
@@ -117,11 +119,11 @@ This meta-skill composes the following skills. Apply them in the order shown bas
 ## Workflow: API Discovery (Reverse Engineering)
 
 ```
-[capture] → [decode] → [document] → [scaffold] → [test] → [review]
+[capture] → [research] → [document] → [scaffold] → [test] → [review]
 ```
 
 1. **Capture** — `reverse-engineer` (fork) analyzes cURL/traffic from perplexity.ai DevTools
-2. **Decode** — `reverse-engineer` extracts endpoint URL, auth, payload schema, response format
+2. **Research** — `reverse-engineer` studies request/response patterns, tests variations, maps edge cases and auth flows
 3. **Document** — `reverse-engineer` writes endpoint documentation with field types and examples
 4. **Scaffold** — `scaffolder` (fork) creates Pydantic models and service methods from schema
 5. **Implement** — `sse-expert` or `scaffolder` implements transport and domain code
@@ -130,9 +132,10 @@ This meta-skill composes the following skills. Apply them in the order shown bas
 
 ## Workflow: API Endpoint
 
-1. **Design** — `code-reviewer` reviews against `api-design-principles`
-2. **Implement** — `scaffolder` (fork) creates FastAPI endpoint
-3. **Test** — `test-runner` (fork) validates with pytest-httpx mocks
+1. **Research** — `code-reviewer` (fork) studies existing endpoints and `api-design-principles` patterns
+2. **Design** — `code-reviewer` reviews proposed schema against REST conventions
+3. **Implement** — `scaffolder` (fork) creates FastAPI endpoint
+4. **Test** — `test-runner` (fork) validates with pytest-httpx mocks
 
 ## Project Quick Reference
 
