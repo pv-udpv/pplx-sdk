@@ -12,6 +12,8 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+    # To use self-hosted runner, uncomment the following line and comment the line above:
+    # runs-on: [self-hosted, linux, x64, docker]
     strategy:
       matrix:
         python-version: ["3.12", "3.13"]

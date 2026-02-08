@@ -79,5 +79,8 @@ Thumbs.db
 .venv/
 .uv/
 
+# Self-hosted runner temporary files
+runner/runner-tmp/
+
 # Hooks runtime state (generated per-session)
 .github/hooks/state/
