@@ -373,6 +373,13 @@ pplx-sdk/
 
 ## Agent & Subagent Architecture
 
+> 📚 **[Comprehensive Research & Documentation](./docs/README.md)** — See `docs/` for detailed analysis of the agentic system, including:
+> - Latest merged PR #22 analysis
+> - Dual-path architecture (Copilot + external runners)
+> - Agent handoff workflows with real issue tests
+> - Visual architecture diagrams
+> - Test scripts and scenarios
+
 pplx-sdk includes a multi-agent development system with specialist subagents coordinated by an orchestrator. There are **three ways** to use it depending on your environment.
 
 ### Architecture Overview
