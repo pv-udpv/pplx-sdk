@@ -29,10 +29,6 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-extras --dev
 
-      - name: Install pre-commit
-        if: ${{ env.PRE_COMMIT_BYPASS != '1' && env.PRE_COMMIT_BYPASS != 'true' }}
-        run: uv run pre-commit install
-
       - name: Run pre-commit
         if: ${{ env.PRE_COMMIT_BYPASS != '1' && env.PRE_COMMIT_BYPASS != 'true' }}
         run: uv run pre-commit run --all-files
