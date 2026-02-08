@@ -18,33 +18,41 @@ Use this skill for **any** development task on the pplx-sdk project: implementin
 Each skill delegates to a specialist subagent via `context: fork`. Subagents run in isolated context windows with restricted tool access.
 
 ```
-┌─────────────────────────────────────────────┐
-│              orchestrator                   │
-│  (meta-orchestrator, delegates subtasks)    │
-├─────────────────────────────────────────────┤
-│                                             │
-│  ┌──────────────┐  ┌──────────────┐        │
-│  │ code-reviewer │  │ test-runner   │        │
-│  │ (read-only)   │  │ (run & fix)   │        │
-│  │ view,grep,    │  │ bash,view,    │        │
-│  │ glob,bash     │  │ edit,grep     │        │
-│  └──────────────┘  └──────────────┘        │
-│                                             │
-│  ┌──────────────┐  ┌──────────────┐        │
-│  │ scaffolder    │  │ sse-expert    │        │
-│  │ (create new)  │  │ (streaming)   │        │
-│  │ view,edit,    │  │ view,edit,    │        │
-│  │ bash,grep     │  │ bash,grep     │        │
-│  └──────────────┘  └──────────────┘        │
-│                                             │
-│  ┌────────────────────────────────┐        │
-│  │ reverse-engineer               │        │
-│  │ (API discovery & traffic       │        │
-│  │  analysis, schema decoding)    │        │
-│  │ view,edit,bash,grep,glob       │        │
-│  └────────────────────────────────┘        │
-│                                             │
-└─────────────────────────────────────────────┘
+┌───────────────────────────────────────────────────────┐
+│                  orchestrator                         │
+│  (meta-orchestrator, delegates subtasks)              │
+├───────────────────────────────────────────────────────┤
+│                                                       │
+│  ┌──────────────┐  ┌──────────────┐                  │
+│  │ code-reviewer │  │ test-runner   │                  │
+│  │ (read-only)   │  │ (run & fix)   │                  │
+│  │ view,grep,    │  │ bash,view,    │                  │
+│  │ glob,bash     │  │ edit,grep     │                  │
+│  └──────────────┘  └──────────────┘                  │
+│                                                       │
+│  ┌──────────────┐  ┌──────────────┐                  │
+│  │ scaffolder    │  │ sse-expert    │                  │
+│  │ (create new)  │  │ (streaming)   │                  │
+│  │ view,edit,    │  │ view,edit,    │                  │
+│  │ bash,grep     │  │ bash,grep     │                  │
+│  └──────────────┘  └──────────────┘                  │
+│                                                       │
+│  ┌──────────────┐  ┌──────────────┐                  │
+│  │ reverse-     │  │ architect     │                  │
+│  │  engineer    │  │ (diagrams &   │                  │
+│  │ (API disc.)  │  │  design)      │                  │
+│  │ view,edit,   │  │ view,edit,    │                  │
+│  │ bash,grep    │  │ bash,grep     │                  │
+│  └──────────────┘  └──────────────┘                  │
+│                                                       │
+│  ┌────────────────────────────────┐                  │
+│  │ spa-expert                     │                  │
+│  │ (React/Vite/Workbox/CDP,       │                  │
+│  │  Chrome extensions, SPA RE)    │                  │
+│  │ view,edit,bash,grep,glob       │                  │
+│  └────────────────────────────────┘                  │
+│                                                       │
+└───────────────────────────────────────────────────────┘
 ```
 
 ### Subagent Definitions (`.claude/agents/`)
@@ -57,6 +65,8 @@ Each skill delegates to a specialist subagent via `context: fork`. Subagents run
 | `scaffolder` | Create new modules and files | view, edit, bash, grep, glob | fork |
 | `sse-expert` | SSE streaming implementation | view, edit, bash, grep, glob | fork |
 | `reverse-engineer` | API discovery, traffic analysis | view, edit, bash, grep, glob | fork |
+| `architect` | Architecture diagrams, design validation | view, edit, bash, grep, glob | fork |
+| `spa-expert` | SPA RE: React/Vite/Workbox/CDP, extensions | view, edit, bash, grep, glob | fork |
 
 ## Skill Dependencies
 
@@ -71,6 +81,8 @@ This meta-skill composes the following skills. Apply them in the order shown bas
 | `scaffold-module` | `scaffold-module/SKILL.md` | `scaffolder` | Create new modules per layered architecture |
 | `sse-streaming` | `sse-streaming/SKILL.md` | `sse-expert` | SSE protocol and streaming patterns |
 | `reverse-engineer` | `reverse-engineer/SKILL.md` | `reverse-engineer` | API discovery from browser traffic |
+| `architecture` | `architecture/SKILL.md` | `architect` | System diagrams and design visualization |
+| `spa-reverse-engineer` | `spa-reverse-engineer/SKILL.md` | `spa-expert` | React/Vite/Workbox/CDP webapp RE |
 
 ### Community Skills (installed via `npx skills`)
 
@@ -136,6 +148,31 @@ This meta-skill composes the following skills. Apply them in the order shown bas
 2. **Design** — `code-reviewer` reviews proposed schema against REST conventions
 3. **Implement** — `scaffolder` (fork) creates FastAPI endpoint
 4. **Test** — `test-runner` (fork) validates with pytest-httpx mocks
+
+## Workflow: Architecture Design & Visualization
+
+```
+[analyze] → [research] → [diagram] → [validate] → [document]
+```
+
+1. **Analyze** — `architect` (fork) reads existing code, maps imports and layer dependencies
+2. **Research** — `architect` studies the components involved and their relationships
+3. **Diagram** — `architect` produces Mermaid diagrams (layer map, sequence, class hierarchy, state machine)
+4. **Validate** — `architect` checks for circular deps, upward imports, protocol conformance
+5. **Document** — `architect` embeds diagrams in README, docs, or PR descriptions
+
+## Workflow: SPA Reverse Engineering
+
+```
+[detect] → [research] → [intercept] → [extract] → [document] → [implement]
+```
+
+1. **Detect** — `spa-expert` (fork) identifies the SPA stack (React version, bundler, state management, service workers)
+2. **Research** — `spa-expert` studies the SPA internals, React component tree, and network patterns
+3. **Intercept** — `spa-expert` captures network traffic via CDP, Chrome extension, or DevTools
+4. **Extract** — `spa-expert` extracts React state shapes, API schemas, and Workbox cache strategies
+5. **Document** — `reverse-engineer` + `spa-expert` map discoveries to SDK architecture
+6. **Implement** — `scaffolder` creates models and services; `spa-expert` builds tools/extensions
 
 ## Project Quick Reference
 

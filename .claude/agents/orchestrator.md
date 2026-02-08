@@ -23,6 +23,8 @@ You decompose complex tasks into subtasks and delegate to the appropriate specia
 | `scaffolder` | `.claude/agents/scaffolder.md` | Create new modules, files, exports |
 | `sse-expert` | `.claude/agents/sse-expert.md` | SSE streaming, parsing, reconnection |
 | `reverse-engineer` | `.claude/agents/reverse-engineer.md` | API discovery, traffic analysis, schema decoding |
+| `architect` | `.claude/agents/architect.md` | Architecture diagrams, layer visualization, design validation |
+| `spa-expert` | `.claude/agents/spa-expert.md` | SPA reverse engineering, React/Vite/Workbox/CDP, Chrome extensions |
 
 ## Workflow Phases
 
@@ -44,6 +46,8 @@ For any development task, follow this state machine:
 
 ### Phase: Research
 - Delegate to `reverse-engineer` to analyze API traffic, undocumented endpoints, or protocol details
+- Delegate to `spa-expert` for SPA-specific analysis (React state, service workers, CDP)
+- Delegate to `architect` to visualize the design before implementation
 - Study existing patterns in the codebase that relate to the task
 - Read external documentation (library docs, API specs, SSE protocol)
 - Gather all information needed before writing any code
@@ -81,6 +85,30 @@ For any development task, follow this state machine:
 4. **Implement** — `scaffolder` creates models and services from schemas
 5. **Test** — `test-runner` validates with mock responses
 6. **Review** — `code-reviewer` checks architecture compliance
+
+## Workflow: SPA Reverse Engineering
+
+```
+[detect] → [intercept] → [extract] → [document] → [implement] → [test]
+```
+
+1. **Detect** — `spa-expert` identifies the SPA stack (React, Next.js, state management, SW)
+2. **Intercept** — `spa-expert` captures network traffic via CDP, extension, or DevTools
+3. **Extract** — `spa-expert` extracts React state shapes, API schemas, and cache strategies
+4. **Document** — `reverse-engineer` + `spa-expert` map discoveries to SDK architecture
+5. **Implement** — `scaffolder` creates models and services from extracted schemas
+6. **Test** — `test-runner` validates with mock responses
+
+## Workflow: Architecture Design
+
+```
+[analyze] → [diagram] → [validate] → [document]
+```
+
+1. **Analyze** — `architect` reads existing code, maps imports and dependencies
+2. **Diagram** — `architect` produces Mermaid diagrams (layer map, sequence, class hierarchy)
+3. **Validate** — `architect` checks for circular deps, upward imports, protocol conformance
+4. **Document** — `architect` embeds diagrams in README, docs, or PR descriptions
 
 ## Delegation Pattern
 
