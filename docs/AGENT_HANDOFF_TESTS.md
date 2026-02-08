@@ -345,14 +345,19 @@ This epic demonstrates deep agent coordination across 7 phases.
 ## Running Tests
 
 ```bash
-# Test Issue #8 (simple validation)
-python docs/agent_handoff_tests.py test_issue_8
+# 1) Save the Python snippet above into a test file, for example:
+#    tests/test_agent_handoff.py
 
-# Test Issue #6 (multi-phase workflow)  
-python docs/agent_handoff_tests.py test_issue_6
+# 2) Run the scenarios with pytest via uv:
+
+# Test Issue #8 (simple validation)
+uv run pytest tests/test_agent_handoff.py -k test_issue_8
+
+# Test Issue #6 (multi-phase workflow)
+uv run pytest tests/test_agent_handoff.py -k test_issue_6
 
 # Test Issue #11 (epic simulation)
-python docs/agent_handoff_tests.py test_issue_11
+uv run pytest tests/test_agent_handoff.py -k test_issue_11
 ```
 
 ## Expected Output
