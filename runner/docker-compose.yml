@@ -1,0 +1,46 @@
+version: "3.8"
+
+services:
+  github-runner:
+    image: myoung34/github-runner:2.321.0
+    restart: unless-stopped
+    environment:
+      # Repository configuration
+      REPO_URL: https://github.com/pv-udpv/pplx-sdk
+      ACCESS_TOKEN: ${GH_PAT}
+      PERPLEXITY_API_KEY: ${PERPLEXITY_API_KEY}
+      
+      # Runner configuration
+      RUNNER_NAME: docker-runner-${HOSTNAME:-default}
+      RUNNER_WORKDIR: /tmp/runner/work
+      RUNNER_SCOPE: repo
+      LABELS: self-hosted,linux,x64,docker
+      
+      # Ephemeral mode - runner is destroyed after each job
+      EPHEMERAL: true
+      
+      # Optional: Disable automatic updates
+      DISABLE_RUNNER_UPDATE: false
+      
+    volumes:
+      # Mount Docker socket for Docker-in-Docker (DinD) support
+      # WARNING: This gives the container root access to the host Docker daemon
+      - /var/run/docker.sock:/var/run/docker.sock
+      
+      # Persistent runner work directory (optional)
+      - ./runner-tmp:/tmp/runner
+      
+    # Security: Run with limited privileges when possible
+    # Note: Docker socket access requires elevated privileges
+    privileged: false
+    
+    # Resource limits (for Docker Swarm or docker compose --compatibility mode)
+    # Note: These limits are ignored by standard docker-compose up
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '2.0'
+    #       memory: 4G
+    #     reservations:
+    #       cpus: '1.0'
+    #       memory: 2G
