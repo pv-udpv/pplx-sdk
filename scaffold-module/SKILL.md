@@ -1,13 +1,19 @@
 ---
 name: scaffold-module
 description: Scaffold new modules and components for pplx-sdk following the layered architecture and established code patterns.
+context: fork
+agent: scaffolder
 ---
 
-# Scaffold New Module
+# scaffold-module
 
 Generate new modules following pplx-sdk's layered architecture and conventions.
 
-## Steps
+## When to use
+
+Use this skill when creating a new transport backend, domain service, or shared utility for the SDK.
+
+## Instructions
 
 1. **Identify the target layer** (core, shared, transport, domain, or client).
 2. **Create the source file** with proper imports, type annotations, and docstrings.
@@ -69,7 +75,6 @@ class NewComponent:
 """Tests for new_component module."""
 
 import pytest
-
 from pplx_sdk.core.exceptions import TransportError
 
 

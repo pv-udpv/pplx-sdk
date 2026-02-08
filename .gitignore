@@ -78,3 +78,6 @@ Thumbs.db
 *.log
 .venv/
 .uv/
+
+# Hooks runtime state (generated per-session)
+.github/hooks/state/

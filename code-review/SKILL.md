@@ -1,13 +1,19 @@
 ---
 name: code-review
 description: Review code changes against pplx-sdk architecture conventions, type safety, error handling, and testing standards.
+context: fork
+agent: code-reviewer
 ---
 
-# Code Review for pplx-sdk
+# code-review
 
 Review code changes following pplx-sdk project standards and the layered architecture.
 
-## Steps
+## When to use
+
+Use this skill when reviewing pull requests or code changes in the pplx-sdk repository to ensure compliance with project conventions.
+
+## Instructions
 
 1. **Check architecture layer compliance**: Verify imports respect `core → shared → transport/domain → client` dependency flow. No circular imports allowed.
 2. **Verify type safety**: All functions must have complete type annotations. Use `from __future__ import annotations` at the top of every module.

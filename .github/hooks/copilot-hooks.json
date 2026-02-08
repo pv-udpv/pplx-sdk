@@ -4,15 +4,31 @@
     "sessionStart": [
       {
         "type": "command",
-        "bash": "pip install -e '.[dev]' --quiet 2>/dev/null; echo 'pplx-sdk session initialized'",
+        "bash": ".github/hooks/scripts/session-start.sh",
         "cwd": ".",
         "timeoutSec": 30
+      }
+    ],
+    "sessionEnd": [
+      {
+        "type": "command",
+        "bash": ".github/hooks/scripts/session-end.sh",
+        "cwd": ".",
+        "timeoutSec": 10
+      }
+    ],
+    "postToolUse": [
+      {
+        "type": "command",
+        "bash": ".github/hooks/scripts/post-tool-use.sh",
+        "cwd": ".",
+        "timeoutSec": 5
       }
     ],
     "preToolUse": [
       {
         "type": "command",
-        "bash": "TOOL_NAME=$(echo \"$HOOK_INPUT\" | python3 -c \"import sys,json; print(json.load(sys.stdin).get('toolName',''))\" 2>/dev/null); TOOL_ARGS=$(echo \"$HOOK_INPUT\" | python3 -c \"import sys,json; print(json.load(sys.stdin).get('toolArgs',''))\" 2>/dev/null); if [ \"$TOOL_NAME\" = \"bash\" ] && echo \"$TOOL_ARGS\" | grep -qE 'rm\\s+-rf\\s+/|mkfs|dd\\s+if=|:(){ :|\\|\\s*sudo'; then echo '{\"permissionDecision\":\"deny\",\"permissionDecisionReason\":\"Destructive system commands are not allowed\"}'; else echo '{}'; fi",
+        "bash": ".github/hooks/security-gate.sh",
         "cwd": ".",
         "timeoutSec": 5
       }

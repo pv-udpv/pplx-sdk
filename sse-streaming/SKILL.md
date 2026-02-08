@@ -1,13 +1,21 @@
 ---
 name: sse-streaming
 description: Implement and debug SSE (Server-Sent Events) streaming for the Perplexity AI API, including parsing, reconnection, and retry logic.
+context: fork
+agent: sse-expert
 ---
 
-# SSE Streaming for Perplexity API
+# sse-streaming
 
 Handle SSE streaming implementation, debugging, and reconnection for pplx-sdk.
 
-## SSE Protocol Format
+## When to use
+
+Use this skill when implementing, debugging, or extending SSE streaming functionality for the Perplexity API.
+
+## Instructions
+
+### SSE Protocol Format
 
 The Perplexity API uses standard SSE format:
 
@@ -24,7 +32,7 @@ data: {"text": "complete answer", "cursor": "cursor-value", "backend_uuid": "uui
 : [end]
 ```
 
-## Parsing Rules
+### Parsing Rules
 
 1. Read line-by-line from streaming response
 2. Skip lines starting with `:` (comments) — except check for `[end]` marker
@@ -33,7 +41,7 @@ data: {"text": "complete answer", "cursor": "cursor-value", "backend_uuid": "uui
 5. Empty line → emit event (type + accumulated data), reset buffers
 6. Stop on `[end]` marker
 
-## Event Types
+### Event Types
 
 | Event | Purpose | Key Fields |
 |-------|---------|-----------|
@@ -44,7 +52,7 @@ data: {"text": "complete answer", "cursor": "cursor-value", "backend_uuid": "uui
 | `related_questions` | Follow-up suggestions | `questions[]` |
 | `error` | Server error | `message`, `code` |
 
-## Stream Lifecycle
+### Stream Lifecycle
 
 ```python
 for chunk in transport.stream(query="...", context_uuid="..."):
@@ -55,21 +63,19 @@ for chunk in transport.stream(query="...", context_uuid="..."):
         break
 ```
 
-## Reconnection with Cursor
+### Reconnection with Cursor
 
 When a stream disconnects, resume using the cursor from the last `final_response`:
 
 ```python
-# Save cursor from previous stream
 cursor = last_chunk.data.get("cursor")
 backend_uuid = last_chunk.backend_uuid
 
-# Reconnect with resume parameters
 payload["cursor"] = cursor
 payload["resume_entry_uuids"] = [backend_uuid]
 ```
 
-## Retry with Exponential Backoff
+### Retry with Exponential Backoff
 
 ```python
 from pplx_sdk.shared.retry import RetryConfig
@@ -83,9 +89,9 @@ config = RetryConfig(
 )
 ```
 
-## Common Pitfalls
+### Common Pitfalls
 
-- **Don't parse non-JSON data lines**: Some SSE lines may contain plain text; wrap `json.loads()` in try/except
+- **Don't parse non-JSON data lines**: Wrap `json.loads()` in try/except
 - **Handle empty streams**: Raise `StreamingError` if no events received
 - **Buffer multi-line data**: Some `data:` fields span multiple lines; accumulate until empty line
 - **Respect `[end]` marker**: Always check for `[end]` in comment lines to stop iteration

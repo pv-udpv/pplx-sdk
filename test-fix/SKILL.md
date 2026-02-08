@@ -1,13 +1,19 @@
 ---
 name: test-fix
 description: Diagnose and fix failing pytest tests in the pplx-sdk project, following existing test patterns and conventions.
+context: fork
+agent: test-runner
 ---
 
-# Fix Failing Tests
+# test-fix
 
 Diagnose and fix failing tests following pplx-sdk testing conventions.
 
-## Steps
+## When to use
+
+Use this skill when pytest tests fail and you need to identify the root cause and apply the correct fix.
+
+## Instructions
 
 1. **Read the failure output** carefully — identify the root cause (assertion error, import error, missing mock, timeout, etc.).
 2. **Locate the source code** the test exercises — the fix may be in the source, not the test itself.
