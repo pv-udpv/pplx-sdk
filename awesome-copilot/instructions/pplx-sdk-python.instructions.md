@@ -46,7 +46,7 @@ pplx-sdk is a production-grade Python SDK for Perplexity AI featuring native SSE
 ### Type Annotations
 - Always use `from __future__ import annotations` at the top of modules.
 - Import order: stdlib → typing → external packages → local imports.
-- Use `Optional[X]` instead of `X | None` for function parameters with default `None`.
+- Use PEP 604 unions (`X | None`) for optional types. Do not use `Optional[X]`.
 - Provide complete return type annotations.
 
 ### Naming Conventions
@@ -83,7 +83,7 @@ pplx-sdk is a production-grade Python SDK for Perplexity AI featuring native SSE
 
 ## Anti-Patterns to Avoid
 - Circular imports between layers.
-- Mutable default arguments — use `Optional[Dict] = None` then `headers = headers or {}`.
+- Mutable default arguments — use `dict[str, str] | None = None` then `headers = headers or {}`.
 - Implicit `Any` — always provide type annotations.
 - Bare `except:` or `except Exception:`.
 - Importing client in domain, or domain in transport.

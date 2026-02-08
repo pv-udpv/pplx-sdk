@@ -43,9 +43,8 @@ You are scaffolding a new module for **pplx-sdk**, a production-grade Perplexity
 ```python
 from __future__ import annotations
 
-from typing import Optional
-
 from pplx_sdk.core.exceptions import ValidationError
+from pplx_sdk.core.protocols import Transport
 
 
 class MyService:
@@ -58,7 +57,7 @@ class MyService:
     def __init__(self, transport: Transport) -> None:
         self._transport = transport
 
-    def my_method(self, param: str, options: Optional[dict[str, str]] = None) -> str:
+    def my_method(self, param: str, options: dict[str, str] | None = None) -> str:
         """Perform [describe action].
 
         Args:
@@ -75,5 +74,6 @@ class MyService:
         if not param:
             raise ValidationError("param must not be empty")
         opts = options or {}
-        return self._transport.request("GET", f"/api/{param}", headers=opts)
+        response = self._transport.request("GET", f"/api/{param}", headers=opts)
+        return response.text
 ```

@@ -32,7 +32,7 @@ You are an expert developer specializing in **pplx-sdk**, a production-grade Pyt
 - Follow import order: stdlib → typing → external packages → local imports
 - Use Google-style docstrings with Args, Returns, and Raises sections
 - Chain exceptions with `raise CustomError("message") from exc`
-- Use `Optional[X] = None` for optional parameters, then `x = x or default`
+- Use PEP 604 unions (`X | None = None`) for optional parameters, then `x = x or default`
 - Name tests as `test_<module>_<behavior>`
 - Use `ruff` for linting and formatting, `mypy` for type checking
 - Apply retry logic with `RetryConfig` and exponential backoff for transient errors
