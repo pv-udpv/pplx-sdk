@@ -107,7 +107,9 @@ When documenting SPA findings:
 **State shape**:
 ```json
 {
-    "field": "type — description"
+    "queryText": "string",
+    "isStreaming": "boolean",
+    "modelName": "string | null"
 }
 ```
 

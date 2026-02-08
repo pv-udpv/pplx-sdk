@@ -31,9 +31,9 @@ Detect the technology stack of the target SPA:
 
 // React detection
 window.__REACT_DEVTOOLS_GLOBAL_HOOK__  // React DevTools presence
-document.querySelector('[data-reactroot]') // React root
 document.querySelector('#__next')  // Next.js
 document.querySelector('#root')    // Vite/CRA
+document.querySelector('#app')     // Vue (for comparison)
 
 // Vite detection
 document.querySelector('script[type="module"]')  // ESM modules
@@ -308,7 +308,7 @@ window.addEventListener('message', (event) => {
 
 ### Known Stack
 - **Framework**: Next.js (React 18+)
-- **Bundler**: Webpack (via Next.js, not raw Vite)
+- **Bundler**: Webpack (via Next.js, not raw Vite — skill covers both for broader SPA RE)
 - **State**: React hooks + context (observed patterns)
 - **Streaming**: SSE via fetch() with ReadableStream
 - **Auth**: Cookie-based (`pplx.session-id`)
