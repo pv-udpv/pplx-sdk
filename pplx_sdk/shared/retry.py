@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import random
 import time
 from dataclasses import dataclass
 from typing import Callable, Optional, TypeVar
@@ -38,8 +39,6 @@ class RetryConfig:
         Returns:
             Delay in seconds
         """
-        import random
-
         backoff = min(
             self.initial_backoff_ms * (self.backoff_multiplier**attempt),
             self.max_backoff_ms,

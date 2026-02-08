@@ -166,7 +166,7 @@ class SSETransport:
         # Parse JSON data
         try:
             parsed_data = json.loads(data)
-        except json.JSONDecodeError as exc:
+        except json.JSONDecodeError:
             # If not JSON, treat as plain text
             parsed_data = {"text": data}
 
