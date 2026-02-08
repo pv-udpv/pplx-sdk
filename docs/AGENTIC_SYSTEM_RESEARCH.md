@@ -489,13 +489,13 @@ The issue requests creation of `.github/copilot-instructions.md` with project-sp
 **Phase 1: Explore (code-reviewer)**
 ```python
 # Agent: code-reviewer
-# Task: Analyze current utils/ structure and dependencies
+# Task: Analyze current shared/ and deprecated utils/ structure
 
 Result:
-- utils/ currently exists with auth.py, logging.py
-- StreamManager in streaming/ has embedded retry logic
-- Imports from utils/ in: client.py, transport/, domain/
-- Layer dependency: shared/ should import from core/ only
+- shared/ exists and contains reusable utilities (auth, logging, retry, etc.)
+- pplx_sdk/utils/__init__.py is deprecated and re-exports from shared/ for backward compatibility
+- No remaining `from pplx_sdk.utils` imports in pplx_sdk/ or tests/
+- Remaining work: define removal timeline for utils/ shim and communicate deprecation externally
 ```
 
 **Phase 2: Test (test-runner)**
