@@ -7,7 +7,7 @@ agent: codegraph
 
 # Code Analysis — AST, Dependency Graphs & Knowledge Graphs
 
-Parse, analyze, and visualize pplx-sdk code structure through AST analysis, dependency graphing, and knowledge extraction.
+Parse, analyze, and visualize code structure through AST analysis, dependency graphing, and knowledge extraction. Supports **Python** (via `ast` module) and **JavaScript/TypeScript** (via `grep`-based import parsing and optional `@babel/parser` / `ts-morph`).
 
 ## When to use
 
@@ -15,11 +15,13 @@ Use this skill when:
 - Building or updating a dependency graph of the codebase
 - Analyzing imports to detect circular dependencies or layer violations
 - Parsing Python AST to extract class hierarchies, function signatures, or call graphs
+- Parsing JavaScript/TypeScript source to extract React component trees, ESM imports, and hook usage
 - Generating a knowledge graph of code entities and their relationships
 - Measuring code complexity (cyclomatic, cognitive, LOC) per module
 - Identifying dead code, unused imports, or orphan modules
-- Mapping how data flows through the SDK layers
+- Mapping how data flows through the SDK layers or SPA component hierarchy
 - Understanding coupling between modules before a refactor
+- Analyzing a SPA's source code structure (component graph, barrel exports, route tree)
 
 ## Instructions
 
@@ -229,7 +231,125 @@ Detect common patterns and anti-patterns in the codebase:
 | Deep nesting | AST indent depth analysis | Nesting > 4 levels |
 | Protocol conformance | Compare class methods vs Protocol | Missing protocol method implementations |
 
-### Step 6: Output Insights Report
+### Step 6: JavaScript/TypeScript Code Graph (SPA)
+
+When analyzing a SPA codebase (React, Next.js, Vite), build a code graph from JavaScript/TypeScript source files.
+
+#### Import Graph Extraction
+
+```bash
+# ESM imports (import ... from '...')
+grep -rn "import .* from " src/ --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" | \
+    awk -F: '{print $1 " → " $NF}' | sort -u
+
+# Re-exports / barrel files
+grep -rn "export .* from " src/ --include="*.ts" --include="*.tsx" | sort -u
+
+# Dynamic imports (lazy loading / code splitting)
+grep -rn "import(" src/ --include="*.ts" --include="*.tsx" | sort -u
+
+# CommonJS requires (legacy)
+grep -rn "require(" src/ --include="*.js" | sort -u
+```
+
+#### React Component Tree
+
+```bash
+# Find all React components (function components)
+grep -rn "export \(default \)\?function \|export const .* = (" src/ --include="*.tsx" --include="*.jsx"
+
+# Find component usage (JSX tags)
+grep -rn "<[A-Z][a-zA-Z]*" src/ --include="*.tsx" --include="*.jsx" | \
+    grep -oP '<[A-Z][a-zA-Z]*' | sort | uniq -c | sort -rn
+
+# Find hooks usage
+grep -rn "use[A-Z][a-zA-Z]*(" src/ --include="*.ts" --include="*.tsx" | \
+    grep -oP 'use[A-Z][a-zA-Z]*' | sort | uniq -c | sort -rn
+
+# Find context providers
+grep -rn "createContext\|\.Provider" src/ --include="*.tsx" --include="*.ts"
+```
+
+#### Route Tree (Next.js / React Router)
+
+```bash
+# Next.js App Router pages
+find app/ -name "page.tsx" -o -name "page.jsx" -o -name "layout.tsx" 2>/dev/null
+
+# Next.js Pages Router
+find pages/ -name "*.tsx" -o -name "*.jsx" 2>/dev/null
+
+# React Router route definitions
+grep -rn "Route\|createBrowserRouter\|path:" src/ --include="*.tsx" --include="*.ts"
+```
+
+#### SPA Dependency Graph as Mermaid
+
+```mermaid
+graph TD
+    subgraph pages["Pages / Routes"]
+        SearchPage["SearchPage"]
+        ThreadPage["ThreadPage"]
+    end
+
+    subgraph components["Components"]
+        SearchBar["SearchBar"]
+        ResponseView["ResponseView"]
+        SourceCard["SourceCard"]
+    end
+
+    subgraph hooks["Hooks"]
+        useQuery["useQuery()"]
+        useStreaming["useStreaming()"]
+        useAuth["useAuth()"]
+    end
+
+    subgraph services["Services / API"]
+        apiClient["apiClient"]
+        sseHandler["sseHandler"]
+    end
+
+    SearchPage --> SearchBar
+    SearchPage --> useQuery
+    ThreadPage --> ResponseView
+    ThreadPage --> useStreaming
+    ResponseView --> SourceCard
+    useQuery --> apiClient
+    useStreaming --> sseHandler
+    SearchBar --> useAuth
+
+    style pages fill:#e1f5fe
+    style components fill:#fff3e0
+    style hooks fill:#f3e5f5
+    style services fill:#e8f5e9
+```
+
+#### SPA Entity Types
+
+| Entity | Source | Example |
+|--------|--------|---------|
+| `Component` | Function returning JSX | `SearchBar`, `ResponseView` |
+| `Hook` | `use*` function | `useQuery`, `useAuth` |
+| `Context` | `createContext()` | `AuthContext`, `ThemeContext` |
+| `Route` | Page/layout file | `/search`, `/thread/[id]` |
+| `Service` | API client module | `apiClient`, `sseHandler` |
+| `Store` | State management | Zustand store, Redux slice |
+| `Type` | TypeScript interface/type | `SearchResult`, `ThreadData` |
+
+#### SPA Relationship Types
+
+| Relationship | Meaning | Example |
+|-------------|---------|---------|
+| `RENDERS` | Component renders another | `SearchPage RENDERS SearchBar` |
+| `USES_HOOK` | Component uses a hook | `SearchPage USES_HOOK useQuery` |
+| `PROVIDES` | Component provides context | `AuthProvider PROVIDES AuthContext` |
+| `CONSUMES` | Component consumes context | `SearchBar CONSUMES AuthContext` |
+| `CALLS_API` | Hook/service calls API endpoint | `useQuery CALLS_API /rest/search` |
+| `IMPORTS` | Module imports another | `SearchPage IMPORTS SearchBar` |
+| `LAZY_LOADS` | Dynamic import for code splitting | `App LAZY_LOADS SettingsPage` |
+| `EXTENDS_TYPE` | Type extends another | `ThreadResponse EXTENDS_TYPE BaseResponse` |
+
+### Step 7: Output Insights Report
 
 Generate a structured report combining all analyses:
 
@@ -241,6 +361,12 @@ Generate a structured report combining all analyses:
 |--------|---------|-----------|-------|------------|
 | core/protocols.py | 2 | 0 | 45 | A |
 | transport/sse.py | 1 | 5 | 180 | B |
+| ... | ... | ... | ... | ... |
+
+### SPA Component Summary (when analyzing JS/TS)
+| Component | Props | Hooks Used | Children | Lines |
+|-----------|-------|------------|----------|-------|
+| SearchPage | 2 | useQuery, useAuth | SearchBar, ResultList | 120 |
 | ... | ... | ... | ... | ... |
 
 ### Dependency Graph
@@ -327,3 +453,7 @@ curl -sf https://example.com/.well-known/agentskills.io/skills/default/SKILL.md
 | Dead code | `code-reviewer` | Confirm and remove |
 | High complexity | `code-reviewer` | Review for refactor opportunity |
 | New entity relationships | `architect` | Update architecture diagrams |
+| SPA component tree | `spa-expert` | Cross-reference with runtime fiber tree |
+| SPA API endpoints in source | `reverse-engineer` | Validate against live traffic captures |
+| SPA hook dependencies | `architect` | Visualize hook → service → API chain |
+| SPA barrel file cycles | `code-reviewer` | Review circular re-exports |

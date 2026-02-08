@@ -73,6 +73,17 @@ Build tools for ongoing discovery:
 - **CDP scripts**: Automated state extraction and API mapping
 - **Playwright fixtures**: Reusable browser automation for testing
 
+### Phase 6: Source Code Graph
+
+Build a static code graph from recovered or available SPA source:
+- **Source map recovery**: Extract original file paths and module structure from `.map` files
+- **Import graph**: Map ESM imports between components, hooks, services, and types
+- **Component tree**: Extract React component hierarchy from JSX usage patterns
+- **Hook dependency chain**: Trace hooks → services → API endpoints
+- **Cross-reference**: Validate runtime fiber tree findings against static source structure
+
+Coordinate with `codegraph` subagent for deep structural analysis. Hand off recovered source files for AST-level parsing and knowledge graph construction.
+
 ## Perplexity.ai Specifics
 
 ### Known Architecture
@@ -121,6 +132,30 @@ When documenting SPA findings:
 **SDK mapping**:
 - Model: `domain/models.py` → `ClassName`
 - Service: `domain/service.py` → `method()`
+```
+
+### SPA Code Graph Output
+
+When producing source code analysis:
+
+```markdown
+### SPA Source Graph: <AppName>
+
+**Stack**: React 18+ / Next.js / TypeScript
+**Components**: N total (M pages, K shared)
+**Hooks**: N custom hooks
+
+#### Component Dependency Graph
+[Mermaid diagram — components → children, hooks, services]
+
+#### Import Graph
+[Mermaid diagram — module-to-module imports]
+
+#### Cross-Reference (Runtime ↔ Static)
+| Runtime Component | Source File | State Shape Match |
+|------------------|-------------|-------------------|
+| SearchPage | pages/SearchPage.tsx | ✅ |
+| ... | ... | ... |
 ```
 
 ## Security & Ethics

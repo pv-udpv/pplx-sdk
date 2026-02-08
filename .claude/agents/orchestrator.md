@@ -93,15 +93,16 @@ For any development task, follow this state machine:
 ## Workflow: SPA Reverse Engineering
 
 ```
-[detect] → [intercept] → [extract] → [document] → [implement] → [test]
+[detect] → [intercept] → [extract] → [code-graph] → [document] → [implement] → [test]
 ```
 
 1. **Detect** — `spa-expert` identifies the SPA stack (React, Next.js, state management, SW)
 2. **Intercept** — `spa-expert` captures network traffic via CDP, extension, or DevTools
 3. **Extract** — `spa-expert` extracts React state shapes, API schemas, and cache strategies
-4. **Document** — `reverse-engineer` + `spa-expert` map discoveries to SDK architecture
-5. **Implement** — `scaffolder` creates models and services from extracted schemas
-6. **Test** — `test-runner` validates with mock responses
+4. **Code Graph** — `codegraph` analyzes SPA source (recovered or available): component tree, import graph, hook chains, TypeScript types
+5. **Document** — `reverse-engineer` + `spa-expert` map runtime + static discoveries to SDK architecture
+6. **Implement** — `scaffolder` creates models and services from extracted schemas
+7. **Test** — `test-runner` validates with mock responses
 
 ## Workflow: Architecture Design
 
@@ -120,11 +121,11 @@ For any development task, follow this state machine:
 [parse] → [graph] → [analyze] → [report] → [act]
 ```
 
-1. **Parse** — `codegraph` parses Python AST, extracts entities (classes, functions, protocols, exceptions)
-2. **Graph** — `codegraph` builds dependency graph and knowledge graph (entity relationships)
-3. **Analyze** — `codegraph` detects circular deps, layer violations, dead code, complexity hotspots
-4. **Report** — `codegraph` produces insights report with Mermaid diagrams
-5. **Act** — Delegate: `architect` updates diagrams, `code-reviewer` reviews violations, `scaffolder` fixes gaps
+1. **Parse** — `codegraph` parses source AST: Python via `ast` module, JavaScript/TypeScript via grep-based import parsing
+2. **Graph** — `codegraph` builds dependency graph (module-to-module imports) and knowledge graph (entity relationships: IMPORTS, INHERITS, IMPLEMENTS, CALLS, RAISES for Python; RENDERS, USES_HOOK, CALLS_API, PROVIDES, CONSUMES for SPA)
+3. **Analyze** — `codegraph` detects patterns: circular deps, layer violations, dead code, complexity hotspots, missing protocol methods (Python) or barrel file cycles, prop drilling, orphan routes (SPA)
+4. **Report** — `codegraph` produces structured insights report with Mermaid diagrams and actionable findings
+5. **Act** — Delegate findings: `architect` updates diagrams, `code-reviewer` reviews violations, `scaffolder` fixes gaps, `spa-expert` cross-references runtime analysis
 
 ## Documentation Research
 

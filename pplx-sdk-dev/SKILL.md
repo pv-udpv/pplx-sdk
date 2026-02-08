@@ -68,7 +68,7 @@ Each skill delegates to a specialist subagent via `context: fork`. Subagents run
 | `reverse-engineer` | API discovery, traffic analysis | view, edit, bash, grep, glob | fork |
 | `architect` | Architecture diagrams, design validation | view, edit, bash, grep, glob | fork |
 | `spa-expert` | SPA RE: React/Vite/Workbox/CDP, extensions | view, edit, bash, grep, glob | fork |
-| `codegraph` | AST parsing, dependency graphs, knowledge graphs | view, edit, bash, grep, glob | fork |
+| `codegraph` | AST parsing (Python + JS/TS), dep graphs, knowledge graphs | view, edit, bash, grep, glob | fork |
 
 ## Skill Dependencies
 
@@ -85,7 +85,7 @@ This meta-skill composes the following skills. Apply them in the order shown bas
 | `reverse-engineer` | `reverse-engineer/SKILL.md` | `reverse-engineer` | API discovery from browser traffic |
 | `architecture` | `architecture/SKILL.md` | `architect` | System diagrams and design visualization |
 | `spa-reverse-engineer` | `spa-reverse-engineer/SKILL.md` | `spa-expert` | React/Vite/Workbox/CDP webapp RE |
-| `code-analysis` | `code-analysis/SKILL.md` | `codegraph` | AST parsing, dependency graphs, knowledge graphs |
+| `code-analysis` | `code-analysis/SKILL.md` | `codegraph` | AST parsing (Python + JS/TS), dependency graphs, knowledge graphs |
 
 ### Community Skills (installed via `npx skills`)
 
@@ -170,15 +170,16 @@ This meta-skill composes the following skills. Apply them in the order shown bas
 ## Workflow: SPA Reverse Engineering
 
 ```
-[detect] → [research] → [intercept] → [extract] → [document] → [implement]
+[detect] → [research] → [intercept] → [extract] → [code-graph] → [document] → [implement]
 ```
 
 1. **Detect** — `spa-expert` (fork) identifies the SPA stack (React version, bundler, state management, service workers)
 2. **Research** — `spa-expert` studies the SPA internals, React component tree, and network patterns
 3. **Intercept** — `spa-expert` captures network traffic via CDP, Chrome extension, or DevTools
 4. **Extract** — `spa-expert` extracts React state shapes, API schemas, and Workbox cache strategies
-5. **Document** — `reverse-engineer` + `spa-expert` map discoveries to SDK architecture
-6. **Implement** — `scaffolder` creates models and services; `spa-expert` builds tools/extensions
+5. **Code Graph** — `codegraph` (fork) analyzes SPA source code: component tree, import graph, hook chains, TypeScript types; cross-references with `spa-expert` runtime findings
+6. **Document** — `reverse-engineer` + `spa-expert` map runtime + static discoveries to SDK architecture
+7. **Implement** — `scaffolder` creates models and services; `spa-expert` builds tools/extensions
 
 ## Workflow: Code Analysis & Knowledge Graph
 
@@ -186,11 +187,11 @@ This meta-skill composes the following skills. Apply them in the order shown bas
 [parse] → [graph] → [analyze] → [report] → [act]
 ```
 
-1. **Parse** — `codegraph` (fork) parses Python AST across all modules, extracts entities (classes, functions, protocols, exceptions)
-2. **Graph** — `codegraph` builds dependency graph (module-to-module imports) and knowledge graph (entity relationships: IMPORTS, INHERITS, IMPLEMENTS, CALLS, RAISES)
-3. **Analyze** — `codegraph` detects patterns: circular deps, layer violations, dead code, complexity hotspots, missing protocol methods
+1. **Parse** — `codegraph` (fork) parses source AST: Python via `ast` module, JavaScript/TypeScript via grep-based import parsing
+2. **Graph** — `codegraph` builds dependency graph (module-to-module imports) and knowledge graph (Python: IMPORTS, INHERITS, IMPLEMENTS, CALLS, RAISES; SPA: RENDERS, USES_HOOK, CALLS_API, PROVIDES, CONSUMES)
+3. **Analyze** — `codegraph` detects patterns: circular deps, layer violations, dead code, complexity hotspots (Python); barrel file cycles, prop drilling, orphan routes (SPA)
 4. **Report** — `codegraph` produces structured insights report with Mermaid diagrams and actionable findings
-5. **Act** — Delegate findings: `architect` updates diagrams, `code-reviewer` reviews violations, `scaffolder` fixes missing implementations
+5. **Act** — Delegate findings: `architect` updates diagrams, `code-reviewer` reviews violations, `scaffolder` fixes gaps, `spa-expert` cross-references runtime analysis
 
 ## Project Quick Reference
 

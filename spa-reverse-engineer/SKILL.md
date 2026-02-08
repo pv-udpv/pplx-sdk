@@ -304,6 +304,49 @@ window.addEventListener('message', (event) => {
 | WebSocket frames | `transport/` | New WebSocket transport |
 | GraphQL queries | `domain/` | Query/mutation services |
 
+### Step 8: SPA Source Code Graph
+
+After runtime analysis, build a **static code graph** of the SPA source. Delegate to `codegraph` for structural analysis.
+
+#### Source Map Recovery
+
+```bash
+# Extract original source paths from source maps
+curl -s https://www.perplexity.ai/ | grep -oP 'src="[^"]*\.js"' | while read src; do
+    url=$(echo $src | grep -oP '"[^"]*"' | tr -d '"')
+    curl -s "https://www.perplexity.ai${url}.map" 2>/dev/null | \
+        python3 -c "import sys,json; d=json.load(sys.stdin); print('\n'.join(d.get('sources',[])))" 2>/dev/null
+done | sort -u
+```
+
+#### Static Analysis (from recovered source or public repo)
+
+```bash
+# Component tree from source
+grep -rn "export \(default \)\?function \|export const .* = (" src/ --include="*.tsx" --include="*.jsx"
+
+# Import graph
+grep -rn "import .* from " src/ --include="*.ts" --include="*.tsx" | \
+    awk -F: '{print $1 " → " $NF}' | sort -u
+
+# Hook usage map
+grep -rn "use[A-Z][a-zA-Z]*(" src/ --include="*.tsx" | \
+    grep -oP 'use[A-Z][a-zA-Z]*' | sort | uniq -c | sort -rn
+
+# API call sites (fetch, axios, etc.)
+grep -rn "fetch(\|axios\.\|api\.\|apiClient\." src/ --include="*.ts" --include="*.tsx"
+```
+
+#### Cross-Reference: Runtime ↔ Static
+
+| Runtime Discovery (spa-expert) | Static Discovery (codegraph) | Cross-Reference |
+|-------------------------------|------------------------------|-----------------|
+| Fiber tree component names | Source component definitions | Match names to source files |
+| Hook state values | Hook implementations | Map state shape to hook logic |
+| Network API calls | `fetch()`/`axios` call sites | Confirm endpoints in source |
+| Context provider values | `createContext()` definitions | Map runtime state to types |
+| Service worker routes | Workbox config in source | Validate caching strategy |
+
 ## Perplexity.ai SPA Notes
 
 ### Known Stack
