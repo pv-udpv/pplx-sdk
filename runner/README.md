@@ -25,7 +25,7 @@ The self-hosted runner is based on [`myoung34/docker-github-actions-runner`](htt
      - `Administration`: **Read and write** (required for self-hosted runners)
      - `Actions`: **Read and write** (optional, for workflow management)
      - `Metadata`: **Read** (automatically included)
-4. Click "Generate token" and copy the token (starts with `ghp_`)
+4. Click "Generate token" and copy the token (starts with `github_pat_`)
 
 ### 2. Configure Environment Variables
 
@@ -37,7 +37,7 @@ cp .env.example .env
 nano .env
 ```
 
-Replace `ghp_YOUR_FINE_GRAINED_PERSONAL_ACCESS_TOKEN_HERE` with your actual token.
+Replace `github_pat_YOUR_FINE_GRAINED_PERSONAL_ACCESS_TOKEN_HERE` with your actual token.
 
 ### 3. Start the Runner
 
@@ -114,17 +114,23 @@ Edit `docker-compose.yml` or `.env` file:
 
 ### Resource Limits
 
-Adjust in `docker-compose.yml` under `deploy.resources`:
+**Note:** Docker Compose ignores `deploy.resources` limits in standard mode. These limits only apply when:
+- Deploying to Docker Swarm, or
+- Using `docker compose up --compatibility`
+
+For standard Docker Compose, use `docker run` resource flags or Docker daemon limits instead.
+
+Example `deploy.resources` configuration (commented out in `docker-compose.yml`):
 
 ```yaml
 deploy:
   resources:
     limits:
-      cpus: '2.0'      # Maximum CPU cores
-      memory: 4G       # Maximum memory
+      cpus: '2.0'      # Maximum CPU cores (Swarm/compatibility only)
+      memory: 4G       # Maximum memory (Swarm/compatibility only)
     reservations:
-      cpus: '1.0'      # Minimum CPU cores
-      memory: 2G       # Minimum memory
+      cpus: '1.0'      # Minimum CPU cores (Swarm/compatibility only)
+      memory: 2G       # Minimum memory (Swarm/compatibility only)
 ```
 
 ## Management
@@ -186,10 +192,13 @@ The runner mounts `/var/run/docker.sock` to support Docker-in-Docker (DinD) work
 1. **Use Ephemeral Mode** (already enabled) - Runner is destroyed after each job
 2. **Network isolation** - Run on a dedicated host or VM
 3. **Use sysbox runtime** - Provides better container isolation:
-   ```bash
-   # Install sysbox: https://github.com/nestybox/sysbox
-   docker-compose --runtime=sysbox-runc up -d
+   ```yaml
+   # In docker-compose.yml, add to the service:
+   runtime: sysbox-runc
    ```
+   Then run: `docker compose up -d`
+   
+   Install sysbox: https://github.com/nestybox/sysbox
 4. **GitHub App Authentication** - Auto-rotating tokens (production recommended)
 
 ### 🔐 Ephemeral Mode
@@ -252,14 +261,31 @@ The runner mounts `/var/run/docker.sock` to support Docker-in-Docker (DinD) work
 
 ### Multiple Runners
 
-To run multiple runners (e.g., for parallel jobs):
+To run multiple runners for parallel jobs, create separate compose files or use Docker run commands:
 
+**Option 1: Multiple compose files**
 ```bash
-# Scale to 3 runners
-docker-compose up -d --scale github-runner=3
+# Copy docker-compose.yml for each runner
+cp docker-compose.yml docker-compose-runner2.yml
+# Edit RUNNER_NAME in each file to be unique
+# Start each separately
+docker compose -f docker-compose.yml up -d
+docker compose -f docker-compose-runner2.yml up -d
 ```
 
-Note: Each runner will have a unique name based on hostname/container ID.
+**Option 2: Docker run commands**
+```bash
+docker run -d --name runner1 \
+  -e REPO_URL=https://github.com/pv-udpv/pplx-sdk \
+  -e ACCESS_TOKEN=${GH_PAT} \
+  -e RUNNER_NAME=docker-runner-1 \
+  -e EPHEMERAL=true \
+  -e LABELS=self-hosted,linux,x64,docker \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  myoung34/github-runner:2.321.0
+```
+
+Note: Each runner must have a unique `RUNNER_NAME`.
 
 ### Custom Labels
 
