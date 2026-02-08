@@ -240,7 +240,7 @@ When analyzing a SPA codebase (React, Next.js, Vite), build a code graph from Ja
 ```bash
 # ESM imports (import ... from '...')
 grep -rn "import .* from " src/ --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" | \
-    awk -F: '{print $1 " → " $NF}' | sort -u
+    sed "s/:/ → /" | sort -u
 
 # Re-exports / barrel files
 grep -rn "export .* from " src/ --include="*.ts" --include="*.tsx" | sort -u
@@ -258,8 +258,8 @@ grep -rn "require(" src/ --include="*.js" | sort -u
 # Find all React components (function components)
 grep -rn "export \(default \)\?function \|export const .* = (" src/ --include="*.tsx" --include="*.jsx"
 
-# Find component usage (JSX tags)
-grep -rn "<[A-Z][a-zA-Z]*" src/ --include="*.tsx" --include="*.jsx" | \
+# Find component usage (JSX self-closing or opening tags)
+grep -rn "<[A-Z][a-zA-Z]*[\ />\n]" src/ --include="*.tsx" --include="*.jsx" | \
     grep -oP '<[A-Z][a-zA-Z]*' | sort | uniq -c | sort -rn
 
 # Find hooks usage

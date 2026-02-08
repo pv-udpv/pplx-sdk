@@ -312,8 +312,8 @@ After runtime analysis, build a **static code graph** of the SPA source. Delegat
 
 ```bash
 # Extract original source paths from source maps
-curl -s https://www.perplexity.ai/ | grep -oP 'src="[^"]*\.js"' | while read src; do
-    url=$(echo $src | grep -oP '"[^"]*"' | tr -d '"')
+curl -s https://www.perplexity.ai/ | grep -oP 'src="(/[^"]*\.js)"' | while read -r url; do
+    echo "Checking: $url"
     curl -s "https://www.perplexity.ai${url}.map" 2>/dev/null | \
         python3 -c "import sys,json; d=json.load(sys.stdin); print('\n'.join(d.get('sources',[])))" 2>/dev/null
 done | sort -u

@@ -155,8 +155,8 @@ grep -rn "import .* from " src/ --include="*.ts" --include="*.tsx" | sort
 # React component definitions
 grep -rn "export \(default \)\?function \|export const .* = (" src/ --include="*.tsx"
 
-# Component usage count (JSX tags)
-grep -rn "<[A-Z][a-zA-Z]*" src/ --include="*.tsx" | grep -oP '<[A-Z][a-zA-Z]*' | sort | uniq -c | sort -rn
+# Component usage count (JSX self-closing or opening tags)
+grep -rn "<[A-Z][a-zA-Z]*[\ />\n]" src/ --include="*.tsx" | grep -oP '<[A-Z][a-zA-Z]*' | sort | uniq -c | sort -rn
 
 # Hook usage
 grep -rn "use[A-Z][a-zA-Z]*(" src/ --include="*.ts" --include="*.tsx" | grep -oP 'use[A-Z][a-zA-Z]*' | sort | uniq -c | sort -rn
