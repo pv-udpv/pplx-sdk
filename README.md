@@ -86,7 +86,7 @@ for chunk in response:
 
 - **Protocol Version**: 2.17-2.18
 - **Total Endpoints**: 38+ (2 SSE + 24 REST + 11 Connectors + 1 Service Worker)
-- **Specifications**: [SSE RFC 8895](https://www.rfc-editor.org/rfc/rfc8895.html), [JSON Patch RFC 6902](https://www.rfc-editor.org/rfc/rfc6902.html)
+- **Specifications**: [Server-Sent Events (WHATWG HTML Living Standard)](https://html.spec.whatwg.org/multipage/server-sent-events.html), [JSON Patch RFC 6902](https://www.rfc-editor.org/rfc/rfc6902.html)
 
 ## Architecture
 
