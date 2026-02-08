@@ -7,6 +7,14 @@
     "context7": {
       "command": "npx",
       "args": ["-y", "@upstash/context7-mcp@latest"]
+    },
+    "deepwiki": {
+      "command": "npx",
+      "args": ["-y", "mcp-deepwiki@latest"]
+    },
+    "llms-txt": {
+      "command": "npx",
+      "args": ["-y", "@mcp-get-community/server-llm-txt@latest"]
     }
   }
 }

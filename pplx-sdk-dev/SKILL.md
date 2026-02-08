@@ -45,12 +45,13 @@ Each skill delegates to a specialist subagent via `context: fork`. Subagents run
 │  │ bash,grep    │  │ bash,grep     │                  │
 │  └──────────────┘  └──────────────┘                  │
 │                                                       │
-│  ┌────────────────────────────────┐                  │
-│  │ spa-expert                     │                  │
-│  │ (React/Vite/Workbox/CDP,       │                  │
-│  │  Chrome extensions, SPA RE)    │                  │
-│  │ view,edit,bash,grep,glob       │                  │
-│  └────────────────────────────────┘                  │
+│  ┌──────────────┐  ┌──────────────┐                  │
+│  │ spa-expert   │  │ codegraph     │                  │
+│  │ (SPA RE,     │  │ (AST, deps,   │                  │
+│  │  CDP, ext.)  │  │  knowledge)   │                  │
+│  │ view,edit,   │  │ view,edit,    │                  │
+│  │ bash,grep    │  │ bash,grep     │                  │
+│  └──────────────┘  └──────────────┘                  │
 │                                                       │
 └───────────────────────────────────────────────────────┘
 ```
@@ -67,6 +68,7 @@ Each skill delegates to a specialist subagent via `context: fork`. Subagents run
 | `reverse-engineer` | API discovery, traffic analysis | view, edit, bash, grep, glob | fork |
 | `architect` | Architecture diagrams, design validation | view, edit, bash, grep, glob | fork |
 | `spa-expert` | SPA RE: React/Vite/Workbox/CDP, extensions | view, edit, bash, grep, glob | fork |
+| `codegraph` | AST parsing, dependency graphs, knowledge graphs | view, edit, bash, grep, glob | fork |
 
 ## Skill Dependencies
 
@@ -83,6 +85,7 @@ This meta-skill composes the following skills. Apply them in the order shown bas
 | `reverse-engineer` | `reverse-engineer/SKILL.md` | `reverse-engineer` | API discovery from browser traffic |
 | `architecture` | `architecture/SKILL.md` | `architect` | System diagrams and design visualization |
 | `spa-reverse-engineer` | `spa-reverse-engineer/SKILL.md` | `spa-expert` | React/Vite/Workbox/CDP webapp RE |
+| `code-analysis` | `code-analysis/SKILL.md` | `codegraph` | AST parsing, dependency graphs, knowledge graphs |
 
 ### Community Skills (installed via `npx skills`)
 
@@ -97,6 +100,9 @@ This meta-skill composes the following skills. Apply them in the order shown bas
 | `skill-creator` | `anthropics/skills` | Guide for creating new skills |
 | `mcp-builder` | `anthropics/skills` | Build MCP servers for tool integration |
 | `webapp-testing` | `anthropics/skills` | Test web apps with Playwright |
+| `ast-grep` | `ast-grep/agent-skill` | Structural code search via AST patterns |
+| `knowledge-graph-builder` | `daffy0208/ai-dev-standards` | Knowledge graph design and entity relationships |
+| `steering` | `nahisaho/codegraphmcpserver` | CodeGraph MCP orchestration and traceability |
 
 ## Workflow: New Feature
 
@@ -174,6 +180,18 @@ This meta-skill composes the following skills. Apply them in the order shown bas
 5. **Document** — `reverse-engineer` + `spa-expert` map discoveries to SDK architecture
 6. **Implement** — `scaffolder` creates models and services; `spa-expert` builds tools/extensions
 
+## Workflow: Code Analysis & Knowledge Graph
+
+```
+[parse] → [graph] → [analyze] → [report] → [act]
+```
+
+1. **Parse** — `codegraph` (fork) parses Python AST across all modules, extracts entities (classes, functions, protocols, exceptions)
+2. **Graph** — `codegraph` builds dependency graph (module-to-module imports) and knowledge graph (entity relationships: IMPORTS, INHERITS, IMPLEMENTS, CALLS, RAISES)
+3. **Analyze** — `codegraph` detects patterns: circular deps, layer violations, dead code, complexity hotspots, missing protocol methods
+4. **Report** — `codegraph` produces structured insights report with Mermaid diagrams and actionable findings
+5. **Act** — Delegate findings: `architect` updates diagrams, `code-reviewer` reviews violations, `scaffolder` fixes missing implementations
+
 ## Project Quick Reference
 
 ```bash
@@ -183,6 +201,9 @@ pip install -e ".[dev]"
 # Install/update community skills
 npx skills add wshobson/agents --skill python-testing-patterns --skill python-type-safety --skill python-error-handling --skill python-design-patterns --skill api-design-principles --skill async-python-patterns --agent github-copilot -y
 npx skills add anthropics/skills --skill skill-creator --skill mcp-builder --skill webapp-testing --agent github-copilot -y
+npx skills add ast-grep/agent-skill --skill ast-grep --agent github-copilot -y
+npx skills add "daffy0208/ai-dev-standards@knowledge-graph-builder" --agent github-copilot -y
+npx skills add nahisaho/codegraphmcpserver --skill steering --agent github-copilot -y
 
 # Lint, format, type-check, test
 ruff check --fix . && ruff format .

@@ -25,6 +25,7 @@ You decompose complex tasks into subtasks and delegate to the appropriate specia
 | `reverse-engineer` | `.claude/agents/reverse-engineer.md` | API discovery, traffic analysis, schema decoding |
 | `architect` | `.claude/agents/architect.md` | Architecture diagrams, layer visualization, design validation |
 | `spa-expert` | `.claude/agents/spa-expert.md` | SPA reverse engineering, React/Vite/Workbox/CDP, Chrome extensions |
+| `codegraph` | `.claude/agents/codegraph.md` | AST parsing, dependency graphs, knowledge graphs, code insights |
 
 ## Workflow Phases
 
@@ -48,6 +49,9 @@ For any development task, follow this state machine:
 - Delegate to `reverse-engineer` to analyze API traffic, undocumented endpoints, or protocol details
 - Delegate to `spa-expert` for SPA-specific analysis (React state, service workers, CDP)
 - Delegate to `architect` to visualize the design before implementation
+- Delegate to `codegraph` for AST analysis, dependency mapping, or knowledge graph extraction
+- Use `deepwiki` MCP to search documentation for libraries and dependencies
+- Use `context7` MCP for context-aware documentation lookups
 - Study existing patterns in the codebase that relate to the task
 - Read external documentation (library docs, API specs, SSE protocol)
 - Gather all information needed before writing any code
@@ -109,6 +113,39 @@ For any development task, follow this state machine:
 2. **Diagram** — `architect` produces Mermaid diagrams (layer map, sequence, class hierarchy)
 3. **Validate** — `architect` checks for circular deps, upward imports, protocol conformance
 4. **Document** — `architect` embeds diagrams in README, docs, or PR descriptions
+
+## Workflow: Code Analysis & Knowledge Graph
+
+```
+[parse] → [graph] → [analyze] → [report] → [act]
+```
+
+1. **Parse** — `codegraph` parses Python AST, extracts entities (classes, functions, protocols, exceptions)
+2. **Graph** — `codegraph` builds dependency graph and knowledge graph (entity relationships)
+3. **Analyze** — `codegraph` detects circular deps, layer violations, dead code, complexity hotspots
+4. **Report** — `codegraph` produces insights report with Mermaid diagrams
+5. **Act** — Delegate: `architect` updates diagrams, `code-reviewer` reviews violations, `scaffolder` fixes gaps
+
+## Documentation Research
+
+Use MCP servers and discovery standards for documentation lookup during any research phase:
+
+### MCP Servers
+- **context7** — context-aware library documentation lookup
+- **deepwiki** — search documentation for any GitHub repository via `read_wiki_structure`, `read_wiki_contents`, `ask_question`
+- **llms-txt** — search llms.txt files for LLM-optimized docs via `list_llm_txt`, `get_llm_txt`, `search_llm_txt`
+- **fetch** — retrieve any URL content as markdown
+
+### Discovery Standards
+- **llms.txt** / **llms-full.txt** — LLM-optimized documentation at `https://<domain>/llms.txt`; check dependency sites for these files
+- **.well-known/agentskills.io** — agent skill discovery at `https://<domain>/.well-known/agentskills.io/skills/`; find SKILL.md files published by libraries
+
+### Lookup Priority
+1. Check `llms.txt` at the dependency's docs URL (fastest, most relevant)
+2. Check `.well-known/agentskills.io` for published agent skills
+3. Query `deepwiki` for the dependency's GitHub repo documentation
+4. Query `context7` for library-specific context
+5. Fall back to `fetch` for raw documentation URLs
 
 ## Delegation Pattern
 

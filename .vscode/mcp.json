@@ -10,6 +10,16 @@
         "type": "stdio",
         "command": "npx",
         "args": ["-y", "@upstash/context7-mcp@latest"]
+      },
+      "deepwiki": {
+        "type": "stdio",
+        "command": "npx",
+        "args": ["-y", "mcp-deepwiki@latest"]
+      },
+      "llms-txt": {
+        "type": "stdio",
+        "command": "npx",
+        "args": ["-y", "@mcp-get-community/server-llm-txt@latest"]
       }
     }
   }
