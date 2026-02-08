@@ -18,6 +18,9 @@ SKILLS=(
     "github/awesome-copilot@chrome-devtools"
 )
 
+# pplx-sdk collection for awesome-copilot (local, ready for upstream submission)
+COLLECTION_DIR="awesome-copilot"
+
 # Counter for tracking progress
 TOTAL=${#SKILLS[@]}
 CURRENT=0
@@ -43,3 +46,6 @@ echo "Installed skills:"
 for skill in "${SKILLS[@]}"; do
     echo "  - ${skill##*/}"
 done
+echo ""
+echo "📦 pplx-sdk collection available at: $COLLECTION_DIR/"
+echo "   Submit to github/awesome-copilot via PR to share with the community."

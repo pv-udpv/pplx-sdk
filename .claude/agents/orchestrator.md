@@ -26,6 +26,7 @@ You decompose complex tasks into subtasks and delegate to the appropriate specia
 | `architect` | `.claude/agents/architect.md` | Architecture diagrams, layer visualization, design validation |
 | `spa-expert` | `.claude/agents/spa-expert.md` | SPA reverse engineering, React/Vite/Workbox/CDP, Chrome extensions |
 | `codegraph` | `.claude/agents/codegraph.md` | AST parsing, dependency graphs, knowledge graphs, code insights |
+| `awesome-copilot` | `.claude/agents/awesome-copilot.md` | Manage pplx-sdk collection for github/awesome-copilot |
 
 ## Workflow Phases
 

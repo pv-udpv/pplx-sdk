@@ -53,6 +53,14 @@ Each skill delegates to a specialist subagent via `context: fork`. Subagents run
 │  │ bash,grep    │  │ bash,grep     │                  │
 │  └──────────────┘  └──────────────┘                  │
 │                                                       │
+│  ┌──────────────┐                                    │
+│  │ awesome-     │                                    │
+│  │  copilot     │                                    │
+│  │ (collection) │                                    │
+│  │ view,edit,   │                                    │
+│  │ bash,grep    │                                    │
+│  └──────────────┘                                    │
+│                                                       │
 └───────────────────────────────────────────────────────┘
 ```
 
@@ -69,6 +77,7 @@ Each skill delegates to a specialist subagent via `context: fork`. Subagents run
 | `architect` | Architecture diagrams, design validation | view, edit, bash, grep, glob | fork |
 | `spa-expert` | SPA RE: React/Vite/Workbox/CDP, extensions | view, edit, bash, grep, glob | fork |
 | `codegraph` | AST parsing (Python + JS/TS), dep graphs, knowledge graphs | view, edit, bash, grep, glob | fork |
+| `awesome-copilot` | Manage collection for github/awesome-copilot | view, edit, bash, grep, glob | fork |
 
 ## Skill Dependencies
 

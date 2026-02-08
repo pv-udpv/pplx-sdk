@@ -418,6 +418,7 @@ Each subagent is defined in `.claude/agents/` with restricted tool access and is
 | `architect` | `.claude/agents/architect.md` | Architecture diagrams, design validation |
 | `spa-expert` | `.claude/agents/spa-expert.md` | SPA reverse engineering (React/Vite/Workbox/CDP) |
 | `codegraph` | `.claude/agents/codegraph.md` | AST parsing, dependency graphs, knowledge graphs |
+| `awesome-copilot` | `.claude/agents/awesome-copilot.md` | Manage pplx-sdk collection for github/awesome-copilot |
 
 ### Running Subagents
 
@@ -518,6 +519,20 @@ skills/
 ├── spa-reverse-engineer/SKILL.md  # SPA internals via CDP
 └── pplx-sdk-dev/SKILL.md     # Meta-skill (orchestrator)
 ```
+
+### Awesome Copilot Collection
+
+The `awesome-copilot/` directory contains a collection ready for submission to [github/awesome-copilot](https://github.com/github/awesome-copilot) — the community hub for GitHub Copilot customizations.
+
+```
+awesome-copilot/
+├── instructions/pplx-sdk-python.instructions.md  # Coding conventions
+├── agents/pplx-sdk-expert.agent.md                # Expert chat mode
+├── prompts/pplx-sdk-scaffold.prompt.md            # Module scaffolding prompt
+└── collections/pplx-sdk-development.collection.yml # Collection manifest
+```
+
+The `awesome-copilot` subagent (`.claude/agents/awesome-copilot.md`) manages this collection — validating items, syncing with upstream, and preparing PRs.
 
 ### MCP Servers
 

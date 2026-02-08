@@ -121,7 +121,8 @@
       "reverse-engineer.md",
       "architect.md",
       "spa-expert.md",
-      "codegraph.md"
+      "codegraph.md",
+      "awesome-copilot.md"
     ]
   },
   "workflows": {
