@@ -418,6 +418,7 @@ Each subagent is defined in `.claude/agents/` with restricted tool access and is
 | `architect` | `.claude/agents/architect.md` | Architecture diagrams, design validation |
 | `spa-expert` | `.claude/agents/spa-expert.md` | SPA reverse engineering (React/Vite/Workbox/CDP) |
 | `codegraph` | `.claude/agents/codegraph.md` | AST parsing, dependency graphs, knowledge graphs |
+| `awesome-copilot` | `.claude/agents/awesome-copilot.md` | Manage pplx-sdk collection for github/awesome-copilot |
 
 ### Running Subagents
 
@@ -519,15 +520,31 @@ skills/
 └── pplx-sdk-dev/SKILL.md     # Meta-skill (orchestrator)
 ```
 
+### Awesome Copilot Collection
+
+The `awesome-copilot/` directory contains a collection ready for submission to [github/awesome-copilot](https://github.com/github/awesome-copilot) — the community hub for GitHub Copilot customizations.
+
+```
+awesome-copilot/
+├── instructions/pplx-sdk-python.instructions.md  # Coding conventions
+├── agents/pplx-sdk-expert.agent.md                # Expert chat mode
+├── prompts/pplx-sdk-scaffold.prompt.md            # Module scaffolding prompt
+└── collections/pplx-sdk-development.collection.yml # Collection manifest
+```
+
+The `awesome-copilot` subagent (`.claude/agents/awesome-copilot.md`) manages this collection — validating items, syncing with upstream, and preparing PRs.
+
 ### MCP Servers
 
 All agent environments share MCP servers defined in `.copilot/mcp.json`:
 
-| Server | Package | Purpose |
-|--------|---------|---------|
+| Server | Type | Purpose |
+|--------|------|---------|
+| `github-rw` | HTTP (`api.githubcopilot.com`) | GitHub read-write operations via MCP |
+| `perplexity_ai` | HTTP (`api.perplexity.ai`) | Perplexity AI search and reasoning |
+| `deep-wiki` | `mcp-deepwiki` | GitHub repo documentation search |
 | `fetch` | `@anthropic-ai/mcp-fetch` | Fetch any URL as markdown |
 | `context7` | `@upstash/context7-mcp` | Context-aware library docs |
-| `deepwiki` | `mcp-deepwiki` | GitHub repo documentation search |
 | `llms-txt` | `@mcp-get-community/server-llm-txt` | LLM-optimized docs via llms.txt |
 
 ## Development
@@ -535,22 +552,21 @@ All agent environments share MCP servers defined in `.copilot/mcp.json`:
 ### Setup
 
 ```bash
-# Create venv
-uv venv
-source .venv/bin/activate
+# Install uv (if not installed)
+curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Install with dev deps
-uv pip install -e ".[dev]"
+# Install all dependencies (creates venv automatically)
+uv sync --all-extras --dev
 
 # Run tests
-pytest -v
+uv run pytest -v
 
 # Type check
-mypy pplx_sdk
+uv run mypy pplx_sdk
 
 # Format
-ruff format .
-ruff check --fix .
+uv run ruff format .
+uv run ruff check --fix .
 ```
 
 ### Dependencies

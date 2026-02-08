@@ -1,0 +1,31 @@
+id: pplx-sdk-development
+name: pplx-sdk Development
+description: Complete toolkit for developing with pplx-sdk, a production-grade Perplexity AI Python SDK. Includes coding conventions, an expert chat mode, and a scaffolding prompt for the layered architecture.
+tags: [python, sdk, perplexity, sse, streaming, async, type-safety]
+items:
+  - path: instructions/pplx-sdk-python.instructions.md
+    kind: instruction
+  - path: prompts/pplx-sdk-scaffold.prompt.md
+    kind: prompt
+  - path: agents/pplx-sdk-expert.agent.md
+    kind: agent
+    usage: |
+      recommended
+
+      This agent provides expert guidance for pplx-sdk development.
+
+      This agent is ideal for:
+      - Implementing new features following the five-layer architecture
+      - Writing SSE streaming integrations with reconnection logic
+      - Ensuring mypy --strict compliance across the codebase
+      - Scaffolding new modules with proper typing and tests
+      - Reviewing code for layer boundary violations
+
+      To get the best results, consider:
+      - Using the instruction file to set context for pplx-sdk conventions
+      - Using the scaffold prompt to generate new module boilerplate
+      - Switching to the expert agent for detailed implementation help
+      - Specifying which architecture layer you are working in
+display:
+  ordering: manual
+  show_badge: true
