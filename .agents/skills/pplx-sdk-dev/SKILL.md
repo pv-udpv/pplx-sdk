@@ -196,7 +196,7 @@ This meta-skill composes the following skills. Apply them in the order shown bas
 ## Project Quick Reference
 
 ```bash
-# Install dependencies
+# Install dependencies with uv
 uv sync --all-extras --dev
 
 # Install/update community skills
@@ -207,7 +207,8 @@ npx skills add "daffy0208/ai-dev-standards@knowledge-graph-builder" --agent gith
 npx skills add nahisaho/codegraphmcpserver --skill steering --agent github-copilot -y
 
 # Lint, format, type-check, test
-uv run ruff check --fix . && uv run ruff format .
+uv run ruff check --fix pplx_sdk/ tests/
+uv run ruff format pplx_sdk/ tests/
 uv run mypy pplx_sdk/ --ignore-missing-imports
 uv run pytest tests/ -v --cov=pplx_sdk
 

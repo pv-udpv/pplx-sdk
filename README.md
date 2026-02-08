@@ -72,6 +72,22 @@ for chunk in response:
     print(chunk.choices[0].delta.content or "", end="", flush=True)
 ```
 
+## Documentation
+
+### Comprehensive Guides
+
+- **[Architecture Overview](docs/ARCHITECTURE.md)** - Layered architecture, design patterns, and microservices reference
+- **[SSE Streaming Protocol](docs/SSE_STREAMING.md)** - Server-Sent Events implementation, reconnection, and protocol details
+- **[REST API Guide](docs/REST_API.md)** - Complete REST API reference with endpoints and examples
+- **[OAuth Connectors](docs/OAUTH_CONNECTORS.md)** - Integration with Google Drive, Notion, OneDrive, and more
+- **[Knowledge Integration](docs/KNOWLEDGE_INTEGRATION.md)** - Synthesized knowledge from @pv-udpv repositories
+
+### Protocol Information
+
+- **Protocol Version**: 2.17-2.18
+- **Total Endpoints**: 38+ (2 SSE + 24 REST + 11 Connectors + 1 Service Worker)
+- **Specifications**: [Server-Sent Events (WHATWG HTML Living Standard)](https://html.spec.whatwg.org/multipage/server-sent-events.html), [JSON Patch RFC 6902](https://www.rfc-editor.org/rfc/rfc6902.html)
+
 ## Architecture
 
 ### Low-Level: SSE Transport
