@@ -633,8 +633,11 @@ Content-Type: application/json
 
 ## Implementation Examples
 
-### Python (pplx-sdk)
+### Python (pplx-sdk) - Planned API
 
+> **Note**: The following methods are planned for future implementation. Currently, pplx-sdk focuses on SSE streaming via the `Conversation` API. REST CRUD operations can be accessed via direct HTTP calls.
+
+**Planned high-level API** (not yet implemented):
 ```python
 from pplx_sdk import PerplexityClient
 
@@ -643,26 +646,55 @@ client = PerplexityClient(
     auth_token="<token>"
 )
 
-# List threads
+# Planned: List threads
 threads = await client.list_threads(limit=20, sort="updated_at")
 
-# Create thread
+# Planned: Create thread
 thread = await client.create_thread(title="Research")
 
-# Update thread
+# Planned: Update thread
 await client.update_thread(thread.uuid, title="Updated Title")
 
-# Delete thread
+# Planned: Delete thread
 await client.delete_thread(thread.uuid)
 
-# Get entry
+# Planned: Get entry
 entry = await client.get_entry(entry_uuid)
 
-# Like entry
+# Planned: Like entry
 await client.like_entry(entry_uuid)
 
-# Fork entry
+# Planned: Fork entry
 new_thread = await client.fork_entry(entry_uuid, title="Fork")
+```
+
+**Current working API** (direct HTTP calls):
+```python
+from pplx_sdk import PerplexityClient
+import httpx
+
+client = PerplexityClient(
+    api_base="https://www.perplexity.ai",
+    auth_token="<token>"
+)
+
+# Access the underlying HTTP client
+http_client = client.http_client
+
+# List threads
+response = http_client.get("/rest/threads", params={"limit": 20})
+threads = response.json()
+
+# Create thread
+response = http_client.post("/rest/threads", json={"title": "Research"})
+thread = response.json()
+
+# Get entry
+response = http_client.get(f"/rest/entries/{entry_uuid}")
+entry = response.json()
+
+# Like entry
+http_client.post(f"/rest/entries/{entry_uuid}/like")
 ```
 
 ### TypeScript (pplx-unofficial-sdk)

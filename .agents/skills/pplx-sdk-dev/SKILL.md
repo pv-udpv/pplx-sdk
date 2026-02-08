@@ -196,8 +196,8 @@ This meta-skill composes the following skills. Apply them in the order shown bas
 ## Project Quick Reference
 
 ```bash
-# Install dependencies
-pip install -e ".[dev]"
+# Install dependencies with uv
+uv sync --all-extras --dev
 
 # Install/update community skills
 npx skills add wshobson/agents --skill python-testing-patterns --skill python-type-safety --skill python-error-handling --skill python-design-patterns --skill api-design-principles --skill async-python-patterns --agent github-copilot -y
@@ -207,9 +207,10 @@ npx skills add "daffy0208/ai-dev-standards@knowledge-graph-builder" --agent gith
 npx skills add nahisaho/codegraphmcpserver --skill steering --agent github-copilot -y
 
 # Lint, format, type-check, test
-ruff check --fix . && ruff format .
-mypy pplx_sdk/ --ignore-missing-imports
-pytest tests/ -v --cov=pplx_sdk
+uv run ruff check --fix pplx_sdk/ tests/
+uv run ruff format pplx_sdk/ tests/
+uv run mypy pplx_sdk/ --ignore-missing-imports
+uv run pytest tests/ -v --cov=pplx_sdk
 
 # Manage skills
 npx skills list          # Show installed skills

@@ -42,7 +42,25 @@ Content-Type: application/json
 Cookie: __Secure-next-auth.session-token=<token>
 ```
 
-**Request Payload**:
+**Request Payload** (actual pplx-sdk implementation):
+```json
+{
+  "query_str": "Explain quantum computing",
+  "context_uuid": "<thread-uuid>",
+  "frontend_uuid": "<entry-uuid>",
+  "mode": "concise",
+  "model_preference": "pplx-70b-chat",
+  "sources": ["web"],
+  "use_schematized_api": true,
+  "language": "en-US",
+  "timezone": "UTC",
+  "is_incognito": false,
+  "parent_entry_uuid": "<optional-parent-uuid>",
+  "cursor": "<optional-resume-cursor>"
+}
+```
+
+**Request Payload** (observed in pplx-unofficial-sdk web client):
 ```json
 {
   "version": "2.18",
@@ -56,6 +74,8 @@ Cookie: __Secure-next-auth.session-token=<token>
   "language": "en-US"
 }
 ```
+
+> **Note**: The pplx-sdk uses a slightly different request schema than the web client. The web client uses `version`, `source`, `query`, and `search_focus`, while the SDK uses `query_str`, `frontend_uuid`, `model_preference`, `sources`, and `use_schematized_api`.
 
 ### Request Parameters
 
@@ -313,26 +333,40 @@ The pplx-unofficial-sdk tracks protocol versions by monitoring:
 
 ### JSON Patch Support (Protocol 2.18+)
 
-Instead of sending complete chunks, the server can send diffs:
+Instead of sending complete chunks, the server can send diffs using the `delta` field in `answer_chunk` events:
 
 ```
-event: answer_delta
+event: answer_chunk
 data: {
-data:   "op": "add",
-data:   "path": "/text/42",
-data:   "value": "quantum "
+data:   "delta": {
+data:     "op": "add",
+data:     "path": "/text/42",
+data:     "value": "quantum "
+data:   }
 data: }
 ```
 
 This follows [RFC 6902](https://www.rfc-editor.org/rfc/rfc6902.html) JSON Patch specification.
 
-**Operations**:
+**JSON Patch Operations**:
 - `add` - Add value at path
 - `remove` - Remove value at path
 - `replace` - Replace value at path
 - `move` - Move value from one path to another
 - `copy` - Copy value from one path to another
 - `test` - Test that a value at path equals specified value
+
+**Example** (using `answer_chunk` event with `delta` field):
+```
+event: answer_chunk
+data: {
+data:   "delta": {
+data:     "op": "add",
+data:     "path": "/text/42",
+data:     "value": "quantum "
+data:   }
+data: }
+```
 
 ### Rate Limiting
 
@@ -509,7 +543,8 @@ async for chunk in stream:
 
 ## References
 
-- **SSE Specification**: [RFC 8895](https://www.rfc-editor.org/rfc/rfc8895.html)
+- **SSE Specification (WHATWG HTML)**: [Server-sent events](https://html.spec.whatwg.org/multipage/server-sent-events.html)
+- **SSE over HTTP/2**: [RFC 8895](https://www.rfc-editor.org/rfc/rfc8895.html)
 - **JSON Patch**: [RFC 6902](https://www.rfc-editor.org/rfc/rfc6902.html)
 - **pplx-unofficial-sdk**: [GitHub Repository](https://github.com/pv-udpv/pplx-unofficial-sdk)
 - **HTTP/2 Server Push**: [RFC 7540 Section 8.2](https://www.rfc-editor.org/rfc/rfc7540.html#section-8.2)

@@ -13,18 +13,23 @@ pplx-sdk/
 │   ├── types.py          # Type aliases, shared types
 │   └── exceptions.py     # Custom exception hierarchy
 ├── shared/               # Reusable utilities
-│   ├── retry.py         # Retry logic with backoff
+│   └── retry.py         # Retry logic with backoff
+├── utils/                # Shared utilities
 │   ├── auth.py          # Authentication utilities
 │   └── logging.py       # Logging configuration
 ├── transport/           # HTTP/SSE backends
-│   ├── httpx_transport.py
-│   └── curl_cffi_transport.py
+│   ├── http.py          # HTTP transport
+│   └── sse.py           # SSE transport
 ├── domain/              # Business logic
-│   ├── threads.py       # Thread management
+│   ├── threads.py       # Thread management (stub)
 │   ├── entries.py       # Entry/message management
-│   └── collections.py   # Collections/spaces
+│   ├── collections.py   # Collections/spaces (stub)
+│   ├── articles.py      # Articles service (stub)
+│   └── memories.py      # Memories service (stub)
 ├── streaming/           # SSE streaming engine
-│   └── sse_client.py   # Server-Sent Events client
+│   ├── manager.py       # Stream manager
+│   ├── parser.py        # SSE parser
+│   └── types.py         # Streaming types
 └── client.py           # High-level API (PerplexityClient, Conversation)
 ```
 

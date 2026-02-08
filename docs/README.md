@@ -147,14 +147,16 @@ This documentation synthesizes knowledge from multiple sources:
 
 ### Features
 
-**Implemented**:
-- ✅ SSE streaming
-- ✅ Core REST API (threads, entries)
+**Currently Implemented**:
+- ✅ SSE streaming (via `Conversation.ask_stream()`)
+- ✅ Entry management (create entries via streaming)
 - ✅ Retry with exponential backoff
 - ✅ Type-safe Pydantic models
 
 **Planned** (from knowledge integration):
-- 🔄 Enhanced REST API (collections, forking, JSON Patch)
+- 🔄 REST API for threads (list, create, update, delete)
+- 🔄 REST API for collections management
+- 🔄 Entry forking and JSON Patch updates
 - 🔄 Rate limiting improvements
 - ⚠️ OAuth connectors (Google Drive, Notion, etc.)
 - 📋 Service worker analysis (version detection)
@@ -162,7 +164,8 @@ This documentation synthesizes knowledge from multiple sources:
 ## 🔗 External References
 
 ### RFCs & Specifications
-- [RFC 8895 - Server-Sent Events](https://www.rfc-editor.org/rfc/rfc8895.html)
+- [Server-Sent Events (WHATWG HTML Living Standard)](https://html.spec.whatwg.org/multipage/server-sent-events.html)
+- [SSE over HTTP/2 (RFC 8895)](https://www.rfc-editor.org/rfc/rfc8895.html)
 - [RFC 6902 - JSON Patch](https://www.rfc-editor.org/rfc/rfc6902.html)
 - [RFC 6749 - OAuth 2.0](https://www.rfc-editor.org/rfc/rfc6749.html)
 

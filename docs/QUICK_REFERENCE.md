@@ -65,20 +65,35 @@ for chunk in conv.ask_stream("Explain quantum computing"):
         print(f"\n\nSources: {len(chunk.sources_list)}")
 ```
 
-### REST API (Python)
+### REST API (Python) - Current Implementation
+
+> **Note**: High-level REST methods like `list_threads()` are planned but not yet implemented. Use direct HTTP calls:
 
 ```python
+from pplx_sdk import PerplexityClient
+
+client = PerplexityClient(
+    api_base="https://www.perplexity.ai",
+    auth_token="<token>"
+)
+
+# Access HTTP client for direct REST calls
+http = client.http_client
+
 # List threads
-threads = await client.list_threads(limit=20, sort="updated_at")
+response = http.get("/rest/threads", params={"limit": 20, "sort": "updated_at"})
+threads = response.json()
 
 # Create thread
-thread = await client.create_thread(title="Research")
+response = http.post("/rest/threads", json={"title": "Research"})
+thread = response.json()
 
 # Get entry
-entry = await client.get_entry(entry_uuid)
+response = http.get(f"/rest/entries/{entry_uuid}")
+entry = response.json()
 
 # Like entry
-await client.like_entry(entry_uuid)
+http.post(f"/rest/entries/{entry_uuid}/like")
 ```
 
 ## 🔄 Common Patterns
@@ -125,9 +140,11 @@ async def with_rate_limit(func):
         raise
 ```
 
-## 🔐 OAuth Connectors
+## 🔐 OAuth Connectors (Planned Feature)
 
-### Supported Services
+> **Note**: OAuth connector support is a planned feature for pplx-sdk. The following is based on the pplx-unofficial-sdk TypeScript implementation and serves as a reference for future implementation.
+
+### Supported Services (Reference)
 
 | Service | Type | OAuth Flow | File Operations |
 |---------|------|------------|-----------------|
@@ -137,9 +154,14 @@ async def with_rate_limit(func):
 | Dropbox | Storage | ✅ | List, Sync |
 | Slack | Communication | ✅ | Channel History |
 
-### OAuth Flow
+### OAuth Flow (Planned API)
 
 ```python
+# Future API - not yet implemented in pplx-sdk
+from pplx_sdk.connectors import ConnectorClient
+
+connectors = ConnectorClient(auth_token="<token>")
+
 # 1. Start authorization
 auth = await connectors.authorize("google_drive")
 
