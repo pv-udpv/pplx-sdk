@@ -846,7 +846,7 @@ Checklist:
 | Metric | Value |
 |--------|-------|
 | **MCP Servers** | 6 (github-rw, perplexity_ai, deep-wiki, fetch, context7, llms-txt) |
-| **Skills** | 9 (code-review, test-fix, scaffold, SSE, reverse-engineer, architecture, SPA, code-analysis, meta) |
+| **Skills** | 9 (code-review, test-fix, scaffold-module, sse-streaming, reverse-engineer, architecture, spa-reverse-engineer, code-analysis, pplx-sdk-dev) |
 | **Subagents** | 10 (orchestrator, reviewer, tester, scaffolder, SSE, reverse-engineer, architect, SPA, codegraph, awesome-copilot) |
 | **Task Templates** | 9 (matching skills + explore + full-workflow) |
 | **Open Issues** | 11 (multiple ready for agent handoff) |
