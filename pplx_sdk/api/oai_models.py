@@ -3,7 +3,7 @@
 Provides data models matching OpenAI's Chat Completion API format.
 """
 
-from typing import Any, Dict, List, Literal, Optional, Union
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
@@ -11,11 +11,9 @@ from pydantic import BaseModel, Field
 class ChatMessage(BaseModel):
     """Chat message in OpenAI format."""
 
-    role: Literal["system", "user", "assistant", "function"] = Field(
-        description="Message role"
-    )
+    role: Literal["system", "user", "assistant", "function"] = Field(description="Message role")
     content: str = Field(description="Message content")
-    name: Optional[str] = Field(default=None, description="Optional name for the message")
+    name: str | None = Field(default=None, description="Optional name for the message")
 
 
 class ChatCompletionRequest(BaseModel):
@@ -25,19 +23,15 @@ class ChatCompletionRequest(BaseModel):
     """
 
     model: str = Field(description="Model to use (e.g., pplx-70b-chat, gpt-4-turbo)")
-    messages: List[ChatMessage] = Field(description="List of chat messages")
-    temperature: Optional[float] = Field(default=0.7, description="Sampling temperature")
-    max_tokens: Optional[int] = Field(default=2048, description="Maximum tokens to generate")
+    messages: list[ChatMessage] = Field(description="List of chat messages")
+    temperature: float | None = Field(default=0.7, description="Sampling temperature")
+    max_tokens: int | None = Field(default=2048, description="Maximum tokens to generate")
     stream: bool = Field(default=False, description="Whether to stream responses")
-    top_p: Optional[float] = Field(default=1.0, description="Nucleus sampling parameter")
-    n: Optional[int] = Field(default=1, description="Number of completions")
-    stop: Optional[Union[str, List[str]]] = Field(default=None, description="Stop sequences")
-    presence_penalty: Optional[float] = Field(
-        default=0.0, description="Presence penalty"
-    )
-    frequency_penalty: Optional[float] = Field(
-        default=0.0, description="Frequency penalty"
-    )
+    top_p: float | None = Field(default=1.0, description="Nucleus sampling parameter")
+    n: int | None = Field(default=1, description="Number of completions")
+    stop: str | list[str] | None = Field(default=None, description="Stop sequences")
+    presence_penalty: float | None = Field(default=0.0, description="Presence penalty")
+    frequency_penalty: float | None = Field(default=0.0, description="Frequency penalty")
 
 
 class ChatCompletionChoice(BaseModel):
@@ -45,9 +39,7 @@ class ChatCompletionChoice(BaseModel):
 
     index: int = Field(description="Choice index")
     message: ChatMessage = Field(description="Generated message")
-    finish_reason: Optional[str] = Field(
-        default=None, description="Reason for completion finish"
-    )
+    finish_reason: str | None = Field(default=None, description="Reason for completion finish")
 
 
 class ChatCompletionUsage(BaseModel):
@@ -62,22 +54,18 @@ class ChatCompletionResponse(BaseModel):
     """OpenAI chat completion response format."""
 
     id: str = Field(description="Unique completion ID")
-    object: Literal["chat.completion"] = Field(
-        default="chat.completion", description="Object type"
-    )
+    object: Literal["chat.completion"] = Field(default="chat.completion", description="Object type")
     created: int = Field(description="Unix timestamp")
     model: str = Field(description="Model used")
-    choices: List[ChatCompletionChoice] = Field(description="Generated choices")
-    usage: Optional[ChatCompletionUsage] = Field(
-        default=None, description="Token usage stats"
-    )
+    choices: list[ChatCompletionChoice] = Field(description="Generated choices")
+    usage: ChatCompletionUsage | None = Field(default=None, description="Token usage stats")
 
 
 class ChatCompletionChunkDelta(BaseModel):
     """Delta content in streaming chunk."""
 
-    role: Optional[str] = Field(default=None, description="Message role")
-    content: Optional[str] = Field(default=None, description="Content delta")
+    role: str | None = Field(default=None, description="Message role")
+    content: str | None = Field(default=None, description="Content delta")
 
 
 class ChatCompletionChunkChoice(BaseModel):
@@ -85,9 +73,7 @@ class ChatCompletionChunkChoice(BaseModel):
 
     index: int = Field(description="Choice index")
     delta: ChatCompletionChunkDelta = Field(description="Content delta")
-    finish_reason: Optional[str] = Field(
-        default=None, description="Reason for completion finish"
-    )
+    finish_reason: str | None = Field(default=None, description="Reason for completion finish")
 
 
 class ChatCompletionChunk(BaseModel):
@@ -99,7 +85,7 @@ class ChatCompletionChunk(BaseModel):
     )
     created: int = Field(description="Unix timestamp")
     model: str = Field(description="Model used")
-    choices: List[ChatCompletionChunkChoice] = Field(description="Streaming choices")
+    choices: list[ChatCompletionChunkChoice] = Field(description="Streaming choices")
 
 
 class Model(BaseModel):
@@ -115,11 +101,11 @@ class ModelList(BaseModel):
     """List of available models."""
 
     object: Literal["list"] = Field(default="list", description="Object type")
-    data: List[Model] = Field(description="List of models")
+    data: list[Model] = Field(description="List of models")
 
 
 # Model mapping from OpenAI to Perplexity
-MODEL_MAPPING: Dict[str, Dict[str, Any]] = {
+MODEL_MAPPING: dict[str, dict[str, Any]] = {
     "gpt-4-turbo": {
         "pplx_model": "pplx-70b-deep",
         "mode": "research",

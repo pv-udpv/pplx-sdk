@@ -6,18 +6,18 @@ Wraps Perplexity API with OpenAI's /v1/chat/completions format.
 import json
 import os
 import time
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator, Optional
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import StreamingResponse
 
 from pplx_sdk.api.oai_models import (
     MODEL_MAPPING,
+    ChatCompletionChoice,
     ChatCompletionChunk,
     ChatCompletionChunkChoice,
     ChatCompletionChunkDelta,
-    ChatCompletionChoice,
     ChatCompletionRequest,
     ChatCompletionResponse,
     ChatMessage,
@@ -27,7 +27,7 @@ from pplx_sdk.api.oai_models import (
 from pplx_sdk.client import PerplexityClient
 
 # Global client instance (initialized on startup)
-_client: Optional[PerplexityClient] = None
+_client: PerplexityClient | None = None
 
 
 def get_client() -> PerplexityClient:
@@ -107,7 +107,7 @@ async def list_models() -> ModelList:
     models = []
     timestamp = int(time.time())
 
-    for model_id, config in MODEL_MAPPING.items():
+    for model_id, _config in MODEL_MAPPING.items():
         models.append(
             Model(
                 id=model_id,

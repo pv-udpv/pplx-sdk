@@ -4,8 +4,9 @@ Provides high-level interfaces for interacting with Perplexity API.
 """
 
 import uuid
+from collections.abc import Generator
 from dataclasses import dataclass, field
-from typing import Any, Dict, Generator, List, Optional
+from typing import Any
 
 import httpx
 
@@ -15,7 +16,6 @@ from pplx_sdk.domain.entries import EntriesService
 from pplx_sdk.domain.memories import MemoriesService
 from pplx_sdk.domain.models import Entry, MessageChunk, Thread, ThreadAccess
 from pplx_sdk.domain.threads import ThreadsService
-from pplx_sdk.transport.http import HttpTransport
 from pplx_sdk.transport.sse import SSETransport
 
 
@@ -33,9 +33,9 @@ class PerplexityClient:
     def __init__(
         self,
         api_base: str = "https://www.perplexity.ai",
-        auth_token: Optional[str] = None,
+        auth_token: str | None = None,
         timeout: float = 30.0,
-        default_headers: Optional[Dict[str, str]] = None,
+        default_headers: dict[str, str] | None = None,
     ) -> None:
         """Initialize Perplexity client.
 
@@ -71,7 +71,7 @@ class PerplexityClient:
         self._collections_service = CollectionsService()
         self._articles_service = ArticlesService()
 
-    def _build_headers(self) -> Dict[str, str]:
+    def _build_headers(self) -> dict[str, str]:
         """Build default headers for requests.
 
         Returns:
@@ -135,7 +135,7 @@ class PerplexityClient:
         """
         return self._articles_service
 
-    def new_conversation(self, title: Optional[str] = None) -> "Conversation":
+    def new_conversation(self, title: str | None = None) -> "Conversation":
         """Create a new conversation.
 
         Args:
@@ -207,7 +207,7 @@ class Conversation:
 
     client: PerplexityClient
     thread: Thread
-    entries: List[Entry] = field(default_factory=list)
+    entries: list[Entry] = field(default_factory=list)
 
     @property
     def context_uuid(self) -> str:
@@ -223,7 +223,7 @@ class Conversation:
         query: str,
         mode: str = "concise",
         model_preference: str = "pplx-70b-chat",
-        sources: Optional[list[str]] = None,
+        sources: list[str] | None = None,
         **kwargs: Any,
     ) -> Generator[MessageChunk, None, None]:
         """Ask a question and stream the response.
@@ -259,7 +259,7 @@ class Conversation:
         query: str,
         mode: str = "concise",
         model_preference: str = "pplx-70b-chat",
-        sources: Optional[list[str]] = None,
+        sources: list[str] | None = None,
         **kwargs: Any,
     ) -> Entry:
         """Ask a question and return the complete entry.
@@ -297,7 +297,7 @@ class Conversation:
 
         return entry
 
-    def fork(self, from_entry: Optional[Entry] = None) -> "Conversation":
+    def fork(self, from_entry: Entry | None = None) -> "Conversation":
         """Fork the conversation at a specific entry.
 
         Creates a new conversation with entries up to the fork point.
@@ -338,7 +338,7 @@ class Conversation:
         """
         self.client.collections.save_thread(self.context_uuid, collection_id)
 
-    def to_article(self) -> Optional[dict]:
+    def to_article(self) -> dict | None:
         """Convert conversation to an article.
 
         Returns:
