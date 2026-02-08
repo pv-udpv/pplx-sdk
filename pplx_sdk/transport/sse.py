@@ -10,6 +10,7 @@ from typing import Any, Dict, Generator, Optional
 
 import httpx
 
+from pplx_sdk.core.exceptions import StreamingError, TransportError
 from pplx_sdk.domain.models import MessageChunk
 
 
@@ -107,7 +108,14 @@ class SSETransport:
         }
 
         with self.client.stream("POST", self.endpoint, json=payload, headers=headers) as response:
-            response.raise_for_status()
+            try:
+                response.raise_for_status()
+            except httpx.HTTPStatusError as exc:
+                raise TransportError(
+                    f"SSE request failed: HTTP {exc.response.status_code}",
+                    status_code=exc.response.status_code,
+                    response_body=exc.response.text,
+                ) from exc
 
             # Parse SSE stream
             event_type: Optional[str] = None

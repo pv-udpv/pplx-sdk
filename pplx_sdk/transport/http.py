@@ -7,6 +7,8 @@ from typing import Any, ContextManager, Dict, Optional
 
 import httpx
 
+from pplx_sdk.core.exceptions import AuthenticationError, RateLimitError, TransportError
+
 
 class HttpTransport:
     """HTTP transport wrapper for Perplexity API.
@@ -96,23 +98,47 @@ class HttpTransport:
             httpx.Response object
 
         Raises:
-            RuntimeError: If transport not used in context manager
-            httpx.HTTPError: On HTTP errors
+            TransportError: If transport not used in context manager or HTTP error
+            AuthenticationError: On 401 responses
+            RateLimitError: On 429 responses
         """
         if not self.client:
-            raise RuntimeError("HttpTransport must be used as context manager")
+            raise TransportError("HttpTransport must be used as context manager")
 
         merged_headers = {**self.default_headers}
         if headers:
             merged_headers.update(headers)
 
-        return self.client.request(
-            method=method,
-            url=path,
-            params=params,
-            json=json,
-            headers=merged_headers,
-        )
+        try:
+            response = self.client.request(
+                method=method,
+                url=path,
+                params=params,
+                json=json,
+                headers=merged_headers,
+            )
+            response.raise_for_status()
+            return response
+        except httpx.HTTPStatusError as exc:
+            if exc.response.status_code == 401:
+                raise AuthenticationError(
+                    "Authentication failed",
+                    status_code=401,
+                    response_body=exc.response.text,
+                ) from exc
+            if exc.response.status_code == 429:
+                retry_after = exc.response.headers.get("Retry-After")
+                raise RateLimitError(
+                    "Rate limit exceeded",
+                    retry_after=int(retry_after) if retry_after else None,
+                ) from exc
+            raise TransportError(
+                f"HTTP {exc.response.status_code}: {exc.response.reason_phrase}",
+                status_code=exc.response.status_code,
+                response_body=exc.response.text,
+            ) from exc
+        except httpx.HTTPError as exc:
+            raise TransportError(f"Request failed: {exc}") from exc
 
     def stream(
         self,
@@ -133,11 +159,10 @@ class HttpTransport:
             Context manager yielding httpx.Response with streaming enabled
 
         Raises:
-            RuntimeError: If transport not used in context manager
-            httpx.HTTPError: On HTTP errors
+            TransportError: If transport not used in context manager
         """
         if not self.client:
-            raise RuntimeError("HttpTransport must be used as context manager")
+            raise TransportError("HttpTransport must be used as context manager")
 
         merged_headers = {**self.default_headers}
         if headers:

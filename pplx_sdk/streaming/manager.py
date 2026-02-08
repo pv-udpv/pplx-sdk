@@ -8,6 +8,7 @@ from __future__ import annotations
 import time
 from typing import Any, Dict, Generator, Optional
 
+from pplx_sdk.core.exceptions import StreamingError, TransportError
 from pplx_sdk.domain.models import MessageChunk
 from pplx_sdk.transport.sse import SSETransport
 
@@ -77,7 +78,7 @@ class StreamManager:
             MessageChunk objects from stream
 
         Raises:
-            Exception: If all retries exhausted
+            StreamingError: If all retries exhausted
         """
         retry_count = 0
         cursor: Optional[str] = None
@@ -112,7 +113,7 @@ class StreamManager:
                 # Stream completed successfully
                 break
 
-            except Exception as e:
+            except (TransportError, StreamingError, OSError) as e:
                 retry_count += 1
 
                 # Check if we should retry
@@ -178,6 +179,6 @@ class StreamManager:
         ):
             # Check timeout
             if time.time() - start_time > timeout:
-                raise TimeoutError(f"Stream exceeded timeout of {timeout}s")
+                raise TimeoutError(f"Stream exceeded timeout of {timeout}s")  # noqa: TRY003
 
             yield chunk

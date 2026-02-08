@@ -32,7 +32,8 @@ env.bak/
 venv.bak/
 
 # IDE
-.vscode/
+.vscode/*
+!.vscode/mcp.json
 .idea/
 *.swp
 *.swo
@@ -77,3 +78,6 @@ Thumbs.db
 *.log
 .venv/
 .uv/
+
+# Hooks runtime state (generated per-session)
+.github/hooks/state/
