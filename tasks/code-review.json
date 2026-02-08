@@ -1,0 +1,24 @@
+{
+  "name": "code-review",
+  "description": "Review code changes against pplx-sdk architecture conventions, type safety, error handling, and testing standards.",
+  "agent_type": "review",
+  "skill": "code-review",
+  "skill_path": "skills/code-review/SKILL.md",
+  "inputs": {
+    "target": {
+      "type": "string",
+      "description": "File path, directory, or PR diff to review",
+      "required": true
+    },
+    "focus": {
+      "type": "string",
+      "description": "Specific aspect to focus on (layers, types, errors, tests, all)",
+      "default": "all"
+    }
+  },
+  "outputs": {
+    "findings": "List of issues found with severity and location",
+    "summary": "Overall compliance assessment"
+  },
+  "prompt": "Review the following code for compliance with pplx-sdk architecture conventions. Check: (1) imports respect core → shared → transport → domain → client layer order, (2) all public APIs have complete type annotations and Google-style docstrings, (3) custom exceptions from pplx_sdk.core.exceptions are used, (4) tests follow Arrange-Act-Assert with test_<module>_<behavior> naming. Target: {{target}}, Focus: {{focus}}"
+}

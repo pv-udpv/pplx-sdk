@@ -189,12 +189,41 @@ pytest -v                # Run tests
 
 ## Agent & Skill Architecture
 
-> **GitHub Copilot Coding Agent** reads only this prompt and the MCP config (`.copilot/mcp.json`).
-> It does **not** load `agent.json` or skill files from disk.
-> The skill behaviors below are embedded here so Copilot can use them directly.
+> **Two agent worlds run in parallel** in this repository:
 >
-> For **external agent runners** (Cline, obra/superpowers, custom MCP hosts),
-> refer to the canonical `agent.json` manifest at the repository root.
+> ### 1. GitHub Copilot Coding Agent (this prompt)
+> - Reads **only** this prompt and MCP config (`.copilot/mcp.json`)
+> - Does **not** load `agent.json`, `tasks/`, or `SKILL.md` files from disk
+> - Skill behaviors are **embedded below** so Copilot can use them directly
+> - Architecture: `prompt + MCP = behavior`
+>
+> ### 2. External agent runners (pplx-sdk, Cline, obra/superpowers)
+> - Load `agent.json` manifest at repository root
+> - Execute task templates from `tasks/*.json`
+> - Read skill definitions from `skills/*/SKILL.md`
+> - Coordinate subagents from `.claude/agents/`
+> - Architecture: `agent.json + tasks + skills + MCP = behavior`
+>
+> ```
+> ┌──────────────────────────┐
+> │  GitHub Coding Agent     │  ← prompt + MCP only
+> │  (this file + mcp.json)  │
+> └──────────┬───────────────┘
+>            │ (capabilities via MCP)
+>            ▼
+> ┌──────────────────────────┐
+> │     MCP Servers          │  ← shared capability layer
+> │  (GitHub, fetch, etc.)   │
+> └──────────┬───────────────┘
+>            │ (also used by)
+>            ▼
+> ┌──────────────────────────┐
+> │  pplx-sdk / Cline runner │  ← tasks + skills + agent.json
+> │  tasks/*.json            │
+> │  skills/                 │
+> │  agent.json              │
+> └──────────────────────────┘
+> ```
 
 ### Available Skills
 

@@ -1,0 +1,25 @@
+{
+  "name": "explore",
+  "description": "General codebase exploration — understand structure, patterns, conventions, and find relevant code for a given question.",
+  "agent_type": "explore",
+  "skill": "pplx-sdk-dev",
+  "skill_path": "skills/pplx-sdk-dev/SKILL.md",
+  "inputs": {
+    "question": {
+      "type": "string",
+      "description": "What to explore or understand about the codebase",
+      "required": true
+    },
+    "scope": {
+      "type": "string",
+      "description": "Scope of exploration (file, module, layer, full)",
+      "default": "full"
+    }
+  },
+  "outputs": {
+    "answer": "Answer to the exploration question",
+    "files": "Relevant files found",
+    "patterns": "Patterns and conventions observed"
+  },
+  "prompt": "Explore the pplx-sdk codebase to answer: {{question}}. Scope: {{scope}}. Examine the layered architecture (core → shared → transport → domain → client), identify relevant files, and describe patterns and conventions."
+}

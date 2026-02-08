@@ -49,6 +49,65 @@
       "description": "Meta-skill for pplx-sdk development. Orchestrates code review, testing, scaffolding, SSE streaming, and Python best practices into a unified workflow."
     }
   ],
+  "tasks": {
+    "directory": "tasks",
+    "actions": [
+      {
+        "name": "code-review",
+        "path": "tasks/code-review.json",
+        "agent_type": "review",
+        "skill": "code-review"
+      },
+      {
+        "name": "test-fix",
+        "path": "tasks/test-fix.json",
+        "agent_type": "test",
+        "skill": "test-fix"
+      },
+      {
+        "name": "scaffold-module",
+        "path": "tasks/scaffold-module.json",
+        "agent_type": "implement",
+        "skill": "scaffold-module"
+      },
+      {
+        "name": "sse-streaming",
+        "path": "tasks/sse-streaming.json",
+        "agent_type": "implement",
+        "skill": "sse-streaming"
+      },
+      {
+        "name": "reverse-engineer",
+        "path": "tasks/reverse-engineer.json",
+        "agent_type": "explore",
+        "skill": "reverse-engineer"
+      },
+      {
+        "name": "architecture",
+        "path": "tasks/architecture.json",
+        "agent_type": "analyze",
+        "skill": "architecture"
+      },
+      {
+        "name": "code-analysis",
+        "path": "tasks/code-analysis.json",
+        "agent_type": "analyze",
+        "skill": "code-analysis"
+      },
+      {
+        "name": "explore",
+        "path": "tasks/explore.json",
+        "agent_type": "explore",
+        "skill": "pplx-sdk-dev"
+      },
+      {
+        "name": "full-workflow",
+        "path": "tasks/full-workflow.json",
+        "agent_type": "orchestrate",
+        "skill": "pplx-sdk-dev"
+      }
+    ]
+  },
   "mcpServers": ".copilot/mcp.json",
   "instructions": ".github/copilot-instructions.md",
   "agents": {

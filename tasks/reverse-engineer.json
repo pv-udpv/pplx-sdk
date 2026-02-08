@@ -1,0 +1,30 @@
+{
+  "name": "reverse-engineer",
+  "description": "Reverse engineer Perplexity AI web APIs — intercept browser traffic, decode undocumented endpoints, map request/response schemas, extract auth flows.",
+  "agent_type": "explore",
+  "skill": "reverse-engineer",
+  "skill_path": "skills/reverse-engineer/SKILL.md",
+  "inputs": {
+    "curl_command": {
+      "type": "string",
+      "description": "cURL command captured from browser DevTools",
+      "required": false
+    },
+    "endpoint": {
+      "type": "string",
+      "description": "API endpoint URL to analyze",
+      "required": false
+    },
+    "action": {
+      "type": "string",
+      "description": "What to discover (e.g., 'map auth flow', 'decode response schema')",
+      "required": true
+    }
+  },
+  "outputs": {
+    "schema": "Request/response schema documentation",
+    "auth_flow": "Authentication flow details",
+    "sdk_mapping": "How the endpoint maps to SDK architecture layers"
+  },
+  "prompt": "Reverse engineer the Perplexity AI API. Action: {{action}}. Analyze the traffic, decode payloads, map request/response schemas, and document how the endpoint should integrate into the pplx-sdk layered architecture (transport models, services, exceptions)."
+}

@@ -1,0 +1,24 @@
+{
+  "name": "architecture",
+  "description": "Visualize and document pplx-sdk system architecture with Mermaid diagrams — layer maps, data flow, dependency graphs, sequence diagrams.",
+  "agent_type": "analyze",
+  "skill": "architecture",
+  "skill_path": "skills/architecture/SKILL.md",
+  "inputs": {
+    "diagram_type": {
+      "type": "string",
+      "description": "Type of diagram (layer-map, data-flow, sequence, dependency-graph, class-hierarchy)",
+      "required": true
+    },
+    "scope": {
+      "type": "string",
+      "description": "What to diagram (e.g., 'full SDK', 'transport layer', 'SSE flow')",
+      "required": true
+    }
+  },
+  "outputs": {
+    "diagram": "Mermaid diagram source",
+    "description": "Explanation of the architecture shown"
+  },
+  "prompt": "Generate a {{diagram_type}} Mermaid diagram for pplx-sdk. Scope: {{scope}}. Map the core → shared → transport → domain → client layered architecture. Show dependencies, data flow, and component relationships."
+}

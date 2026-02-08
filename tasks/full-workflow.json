@@ -1,0 +1,25 @@
+{
+  "name": "full-workflow",
+  "description": "End-to-end feature development workflow — plan, explore, research, scaffold, implement, test, review, verify.",
+  "agent_type": "orchestrate",
+  "skill": "pplx-sdk-dev",
+  "skill_path": "skills/pplx-sdk-dev/SKILL.md",
+  "inputs": {
+    "feature": {
+      "type": "string",
+      "description": "Feature or change to implement",
+      "required": true
+    },
+    "workflow": {
+      "type": "string",
+      "description": "Workflow type (new-feature, bug-fix, sse-streaming, api-discovery, architecture, code-analysis)",
+      "default": "new-feature"
+    }
+  },
+  "outputs": {
+    "plan": "Task decomposition and subagent assignments",
+    "results": "Aggregated results from all workflow phases",
+    "summary": "What was done, tested, and what to watch"
+  },
+  "prompt": "Execute a full {{workflow}} workflow for pplx-sdk. Feature: {{feature}}. Follow the workflow phases: plan → explore → research → scaffold → implement → test → review → verify. Coordinate subagents (code-reviewer, test-runner, scaffolder, sse-expert, reverse-engineer, architect, codegraph) as needed."
+}
