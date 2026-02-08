@@ -76,6 +76,8 @@ class NewComponent:
 
 import pytest
 from pplx_sdk.core.exceptions import TransportError
+# TODO: Update the import path below to match the actual module location
+# from pplx_sdk.<layer>.<module> import NewComponent
 
 
 def test_new_component_initialization():

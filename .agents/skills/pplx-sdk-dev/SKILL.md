@@ -208,7 +208,7 @@ npx skills add nahisaho/codegraphmcpserver --skill steering --agent github-copil
 
 # Lint, format, type-check, test
 ruff check --fix . && ruff format .
-mypy pplx_sdk/ --ignore-missing-imports
+mypy --strict pplx_sdk/
 pytest tests/ -v --cov=pplx_sdk
 
 # Manage skills

@@ -200,9 +200,9 @@ pytest -v                # Run tests
 > ### 2. External agent runners (pplx-sdk, Cline, obra/superpowers)
 > - Load `agent.json` manifest at repository root
 > - Execute task templates from `tasks/*.json`
-> - Read skill definitions from `skills/*/SKILL.md`
+> - Read skill definitions from `.agents/skills/*/SKILL.md`
 > - Coordinate subagents from `.claude/agents/`
-> - Architecture: `agent.json + tasks + skills + MCP = behavior`
+> - Architecture: `agent.json + tasks + .agents/skills + MCP = behavior`
 >
 > ```
 > ┌──────────────────────────┐

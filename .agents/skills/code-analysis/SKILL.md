@@ -55,15 +55,6 @@ def parse_module(filepath: str) -> dict:
                 "decorators": [ast.dump(d) for d in node.decorator_list],
                 "lineno": node.lineno,
             })
-        elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-            if not any(isinstance(parent, ast.ClassDef) for parent in ast.walk(tree)):
-                entities["functions"].append({
-                    "name": node.name,
-                    "args": [arg.arg for arg in node.args.args],
-                    "returns": ast.dump(node.returns) if node.returns else None,
-                    "is_async": isinstance(node, ast.AsyncFunctionDef),
-                    "lineno": node.lineno,
-                })
         elif isinstance(node, ast.Import):
             for alias in node.names:
                 entities["imports"].append({"module": alias.name, "alias": alias.asname})
@@ -72,6 +63,17 @@ def parse_module(filepath: str) -> dict:
                 "module": node.module,
                 "names": [alias.name for alias in node.names],
                 "level": node.level,
+            })
+
+    # Collect only top-level functions (not methods inside classes)
+    for node in tree.body:
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            entities["functions"].append({
+                "name": node.name,
+                "args": [arg.arg for arg in node.args.args],
+                "returns": ast.dump(node.returns) if node.returns else None,
+                "is_async": isinstance(node, ast.AsyncFunctionDef),
+                "lineno": node.lineno,
             })
 
     return entities
