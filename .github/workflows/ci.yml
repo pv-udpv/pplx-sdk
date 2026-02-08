@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-${{ matrix.python-version }}-
+
+      - name: Install dependencies
+        run: pip install -e ".[dev]"
+
+      - name: Run tests with coverage
+        run: pytest --cov=pplx_sdk --cov-report=xml --cov-report=term-missing
+
+      - name: Run ruff linting
+        run: ruff check pplx_sdk/ tests/
+
+      - name: Run ruff formatting check
+        run: ruff format --check pplx_sdk/ tests/
+
+      - name: Run mypy type checking
+        run: mypy pplx_sdk/ --ignore-missing-imports

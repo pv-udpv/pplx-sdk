@@ -98,8 +98,9 @@ class HttpTransport:
             httpx.Response object
 
         Raises:
-            RuntimeError: If transport not used in context manager
-            httpx.HTTPError: On HTTP errors
+            TransportError: If transport not used in context manager or HTTP error
+            AuthenticationError: On 401 responses
+            RateLimitError: On 429 responses
         """
         if not self.client:
             raise TransportError("HttpTransport must be used as context manager")
@@ -158,8 +159,7 @@ class HttpTransport:
             Context manager yielding httpx.Response with streaming enabled
 
         Raises:
-            RuntimeError: If transport not used in context manager
-            httpx.HTTPError: On HTTP errors
+            TransportError: If transport not used in context manager
         """
         if not self.client:
             raise TransportError("HttpTransport must be used as context manager")
