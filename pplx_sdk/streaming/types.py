@@ -1,9 +1,9 @@
 """Event type definitions for SSE streaming."""
 
-from enum import Enum
+from enum import StrEnum
 
 
-class EventType(str, Enum):
+class EventType(StrEnum):
     """SSE event types from Perplexity API."""
 
     QUERY_PROGRESS = "query_progress"

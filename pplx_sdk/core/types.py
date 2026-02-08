@@ -2,19 +2,17 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, Literal
-
-from typing_extensions import TypeAlias
+from typing import Any, Literal
 
 # HTTP types
-Headers: TypeAlias = Dict[str, str]
-QueryParams: TypeAlias = Dict[str, Any]
-JSONData: TypeAlias = Dict[str, Any]
+type Headers = dict[str, str]
+type QueryParams = dict[str, Any]
+type JSONData = dict[str, Any]
 
 # Perplexity-specific types
-Mode: TypeAlias = Literal["concise", "research", "creative"]
-SearchFocus: TypeAlias = Literal["internet", "scholar", "youtube", "reddit", "all"]
-ModelPreference: TypeAlias = Literal[
+type Mode = Literal["concise", "research", "creative"]
+type SearchFocus = Literal["internet", "scholar", "youtube", "reddit", "all"]
+type ModelPreference = Literal[
     "pplx-7b-online",
     "pplx-70b-chat",
     "pplx-70b-deep",
@@ -23,10 +21,10 @@ ModelPreference: TypeAlias = Literal[
 ]
 
 # Entry status
-EntryStatus: TypeAlias = Literal["pending", "completed", "failed", "resuming"]
+type EntryStatus = Literal["pending", "completed", "failed", "resuming"]
 
 # SSE event types
-SSEEventType: TypeAlias = Literal[
+type SSEEventType = Literal[
     "query_progress",
     "search_results",
     "answer_started",

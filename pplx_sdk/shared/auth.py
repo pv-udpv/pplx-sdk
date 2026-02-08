@@ -1,10 +1,9 @@
 """Authentication helpers for token extraction."""
 
 import os
-from typing import Optional
 
 
-def extract_token_from_cookies(cookie_string: str) -> Optional[str]:
+def extract_token_from_cookies(cookie_string: str) -> str | None:
     """Extract Perplexity session token from cookie string.
 
     Args:
@@ -34,7 +33,7 @@ def extract_token_from_cookies(cookie_string: str) -> Optional[str]:
     return None
 
 
-def get_token_from_env() -> Optional[str]:
+def get_token_from_env() -> str | None:
     """Get authentication token from environment variables.
 
     Checks multiple environment variable names in order:
@@ -53,7 +52,7 @@ def get_token_from_env() -> Optional[str]:
     return None
 
 
-def extract_token_from_header(auth_header: str) -> Optional[str]:
+def extract_token_from_header(auth_header: str) -> str | None:
     """Extract token from Authorization header.
 
     Args:

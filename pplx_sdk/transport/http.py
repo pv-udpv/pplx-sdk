@@ -3,7 +3,8 @@
 Provides a wrapper around httpx.Client with authentication and configuration.
 """
 
-from typing import Any, ContextManager, Dict, Optional
+from contextlib import AbstractContextManager
+from typing import Any
 
 import httpx
 
@@ -29,9 +30,9 @@ class HttpTransport:
     def __init__(
         self,
         base_url: str = "https://www.perplexity.ai",
-        auth_token: Optional[str] = None,
+        auth_token: str | None = None,
         timeout: float = 30.0,
-        default_headers: Optional[Dict[str, str]] = None,
+        default_headers: dict[str, str] | None = None,
     ) -> None:
         """Initialize HTTP transport.
 
@@ -59,7 +60,7 @@ class HttpTransport:
             headers.update(default_headers)
 
         self.default_headers = headers
-        self.client: Optional[httpx.Client] = None
+        self.client: httpx.Client | None = None
 
     def __enter__(self) -> "HttpTransport":
         """Context manager entry."""
@@ -81,9 +82,9 @@ class HttpTransport:
         self,
         method: str,
         path: str,
-        params: Optional[Dict[str, Any]] = None,
-        json: Optional[Dict[str, Any]] = None,
-        headers: Optional[Dict[str, str]] = None,
+        params: dict[str, Any] | None = None,
+        json: dict[str, Any] | None = None,
+        headers: dict[str, str] | None = None,
     ) -> httpx.Response:
         """Make an HTTP request.
 
@@ -144,9 +145,9 @@ class HttpTransport:
         self,
         method: str,
         path: str,
-        json: Optional[Dict[str, Any]] = None,
-        headers: Optional[Dict[str, str]] = None,
-    ) -> ContextManager[httpx.Response]:
+        json: dict[str, Any] | None = None,
+        headers: dict[str, str] | None = None,
+    ) -> AbstractContextManager[httpx.Response]:
         """Make a streaming HTTP request.
 
         Args:

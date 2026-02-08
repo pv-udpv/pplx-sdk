@@ -5,8 +5,9 @@ Provides high-level API for asking questions and streaming responses.
 
 from __future__ import annotations
 
-from typing import Any, Dict, Generator, Optional
 import uuid
+from collections.abc import Generator
+from typing import Any
 
 from pplx_sdk.domain.models import Entry, MessageChunk, StreamStatus
 from pplx_sdk.transport.sse import SSETransport
@@ -39,9 +40,9 @@ class EntriesService:
         context_uuid: str,
         mode: str = "concise",
         model_preference: str = "pplx-70b-chat",
-        sources: Optional[list[str]] = None,
-        parent_entry_uuid: Optional[str] = None,
-        frontend_uuid: Optional[str] = None,
+        sources: list[str] | None = None,
+        parent_entry_uuid: str | None = None,
+        frontend_uuid: str | None = None,
         **extra: Any,
     ) -> Generator[MessageChunk, None, None]:
         """Stream a question and yield SSE events.
@@ -84,9 +85,9 @@ class EntriesService:
         context_uuid: str,
         mode: str = "concise",
         model_preference: str = "pplx-70b-chat",
-        sources: Optional[list[str]] = None,
-        parent_entry_uuid: Optional[str] = None,
-        frontend_uuid: Optional[str] = None,
+        sources: list[str] | None = None,
+        parent_entry_uuid: str | None = None,
+        frontend_uuid: str | None = None,
         **extra: Any,
     ) -> Entry:
         """Ask a question and return the complete entry.
@@ -115,7 +116,7 @@ class EntriesService:
             frontend_uuid = str(uuid.uuid4())
 
         # Collect stream
-        entry_data: Dict[str, Any] = {
+        entry_data: dict[str, Any] = {
             "frontend_uuid": frontend_uuid,
             "context_uuid": context_uuid,
             "query": query,

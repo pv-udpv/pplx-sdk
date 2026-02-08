@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from typing import Any, ContextManager, Dict, Optional, Protocol, runtime_checkable
+from contextlib import AbstractContextManager
+from typing import Any, Protocol, runtime_checkable
 
 import httpx
 
@@ -15,9 +16,9 @@ class Transport(Protocol):
         self,
         method: str,
         path: str,
-        params: Optional[Dict[str, Any]] = None,
-        json: Optional[Dict[str, Any]] = None,
-        headers: Optional[Dict[str, str]] = None,
+        params: dict[str, Any] | None = None,
+        json: dict[str, Any] | None = None,
+        headers: dict[str, str] | None = None,
     ) -> httpx.Response:
         """Make HTTP request."""
         ...
@@ -26,9 +27,9 @@ class Transport(Protocol):
         self,
         method: str,
         path: str,
-        json: Optional[Dict[str, Any]] = None,
-        headers: Optional[Dict[str, str]] = None,
-    ) -> ContextManager[httpx.Response]:
+        json: dict[str, Any] | None = None,
+        headers: dict[str, str] | None = None,
+    ) -> AbstractContextManager[httpx.Response]:
         """Make streaming HTTP request."""
         ...
 
@@ -37,6 +38,6 @@ class Transport(Protocol):
 class StreamParser(Protocol):
     """Protocol for SSE event parsing."""
 
-    def parse_event(self, line: str) -> Optional[Dict[str, Any]]:
+    def parse_event(self, line: str) -> dict[str, Any] | None:
         """Parse SSE event line."""
         ...
